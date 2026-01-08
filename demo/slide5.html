@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;700&family=Inter:wght@400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        .slide-container {
+            width: 100%;
+            height: 100vh;
+            background-color: #F4F1EA;
+            font-family: 'Inter', sans-serif;
+            color: #2D5F5D;
+            display: flex;
+            overflow: hidden;
+        }
+        .text-section {
+            width: 45%;
+            min-width: 450px;
+            padding: 40px 50px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .text-section::-webkit-scrollbar {
+            width: 6px;
+        }
+        .text-section::-webkit-scrollbar-track {
+            background: rgba(212, 163, 115, 0.1);
+            border-radius: 3px;
+        }
+        .text-section::-webkit-scrollbar-thumb {
+            background: #D4A373;
+            border-radius: 3px;
+        }
+        .image-grid {
+            width: 55%;
+            flex: 1;
+            padding: 40px 50px 40px 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 300px 300px;
+            gap: 20px;
+        }
+        .image-container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-full-row {
+            grid-column: span 2;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            color: #1A3C40;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            color: #D4A373;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .stats-section {
+            background-color: rgba(212, 163, 115, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #D4A373;
+        }
+        .stats-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1A3C40;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .stat-item {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .stat-number {
+            font-weight: 700;
+            color: #1A3C40;
+            font-size: 14px;
+        }
+        .stat-label {
+            color: #2D5F5D;
+        }
+        .game-changer-section {
+            background: linear-gradient(135deg, rgba(26, 60, 64, 0.1) 0%, rgba(212, 163, 115, 0.15) 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #1A3C40;
+            border-top: 2px solid #D4A373;
+        }
+        .game-changer-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1A3C40;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .game-changer-item {
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            padding-left: 5px;
+        }
+        .game-changer-item strong {
+            color: #1A3C40;
+        }
+        .total-access {
+            background-color: rgba(212, 163, 115, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: #1A3C40;
+        }
+        .family-section {
+            background-color: rgba(212, 163, 115, 0.08);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #D4A373;
+        }
+        .family-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1A3C40;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .family-item {
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+        .summary-box {
+            background-color: rgba(212, 163, 115, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 2px solid rgba(212, 163, 115, 0.3);
+        }
+        .summary-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1A3C40;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .summary-text {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #2D5F5D;
+        }
+        .feature-list {
+            list-style: none;
+        }
+        .feature-item {
+            padding-top: 12px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .feature-icon {
+            color: #D4A373;
+            font-size: 18px;
+            margin-right: 12px;
+            padding-top: 2px;
+        }
+        .feature-content h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            color: #1A3C40;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .feature-content p {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .verdict-tag {
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+        .tag-box {
+            background-color: #1A3C40;
+            color: #F4F1EA;
+            padding: 12px 18px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+            border-radius: 4px;
+        }
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        .nav-button {
+            width: 50px;
+            height: 50px;
+            background-color: #1A3C40;
+            color: #F4F1EA;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .nav-button:hover {
+            background-color: #D4A373;
+            transform: scale(1.1);
+        }
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-button:disabled:hover {
+            transform: none;
+        }
+        .slide-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: #2D5F5D;
+            background-color: rgba(244, 241, 234, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-indicator">Slide 5 / 12</div>
+    <div class="navigation">
+        <button class="nav-button" onclick="navigateTo('index.html')" title="Inicio">
+            <i class="fas fa-home"></i>
+        </button>
+        <button class="nav-button" onclick="navigateTo('slide4.html')" title="Anterior">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <button class="nav-button" onclick="navigateTo('slide6.html')" title="Siguiente">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+    <div class="slide-container">
+        <div class="text-section">
+            <h1>Dreams Onyx</h1>
+            <p class="subtitle">El '2 por 1' Perfecto: Lujo Familiar + Fiesta Adulta</p>
+            
+            <div class="stats-section">
+                <p class="stats-title">📊 Los Números (The Hard Stats)</p>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">🍽️ 11</span> <span class="stat-label">Opciones Gastronómicas</span>
+                        <div style="font-size: 11px; color: #2D5F5D; margin-top: 4px;">1 Buffet + 5 a la Carta<br>+ 5 Snacks/Cafés<br><strong>0 Reservas</strong></div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">🍸 11</span> <span class="stat-label">Bares Premium</span>
+                        <div style="font-size: 11px; color: #2D5F5D; margin-top: 4px;">Licores Premium<br>ilimitados</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">💦 6</span> <span class="stat-label">Piscinas</span>
+                        <div style="font-size: 11px; color: #2D5F5D; margin-top: 4px;">1 agua salada<br>2 Infinity (Preferred)</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">🎡 1</span> <span class="stat-label">Jungle Waterpark</span>
+                        <div style="font-size: 11px; color: #2D5F5D; margin-top: 4px;">4 toboganes<br>+ Río Lento</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-changer-section">
+                <p class="game-changer-title">🤝 El "Game Changer": Acceso Total a Breathless</p>
+                <p style="font-size: 11px; color: #2D5F5D; margin-bottom: 10px; font-style: italic;">(Exclusivo para adultos +18) Al hospedarte aquí, acceso ilimitado al hotel vecino:</p>
+                <div class="game-changer-item">➕ <strong>Sumas:</strong> 11 Restaurantes adicionales + 8 Bares extra</div>
+                <div class="game-changer-item">🎰 <strong>Entretenimiento:</strong> Acceso al Casino y Discoteca "After Dark"</div>
+                <div class="game-changer-item">🎉 <strong>Vibe:</strong> Fiestas de espuma, DJs y ambiente solo para adultos</div>
+                <div class="total-access">
+                    🎯 TOTAL: +20 restaurantes y +19 bares en total
+                </div>
+            </div>
+
+            <div class="family-section">
+                <p class="family-title">👪 Entretenimiento Familiar (En Onyx)</p>
+                <div class="family-item">🎮 <strong>Core Zone Teen Club:</strong> Para adolescentes (13-17) con billar, videojuegos y eventos</div>
+                <div class="family-item">🔬 <strong>Explorer's Club:</strong> Para niños (3-12) enfocado en naturaleza y ciencia</div>
+                <div class="family-item">🎭 <strong>Shows:</strong> Teatro al aire libre y noches temáticas en la plaza central</div>
+            </div>
+            
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-concierge-bell"></i></div>
+                    <div class="feature-content">
+                        <h3>Logística Familiar</h3>
+                        <p>Servicio a la habitación las 24 horas incluido, un recurso vital para las necesidades de Roman.</p>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="summary-box">
+                <p class="summary-title">🎯 Resumen Ejecutivo</p>
+                <p class="summary-text">
+                    <strong>Propuesta de Valor:</strong> Es la opción más estratégica de Punta Cana. Ofrece unas vacaciones de lujo relajado para familias (sin brazaletes ni reservas) mientras permite a los padres "escaparse" caminando al hotel de al lado para disfrutar de casino y fiesta de alto nivel.
+                </p>
+            </div>
+            
+            <div class="verdict-tag">
+                <div class="tag-box">IDEAL PARA: VARIEDAD Y LOGÍSTICA</div>
+            </div>
+        </div>
+        
+        <div class="image-grid">
+            <div class="image-container image-full-row">
+                <img src="https://private-us-east-1.manuscdn.com/sessionFile/V4GPLUh9PcVWF5PtDgTnRp/sandbox/slides_resource_i2ld433kt1fy0iqxxw650-47d7913d-e2b-prod-us1_1767815487274_na1fn_L2hvbWUvdWJ1bnR1L3VwbG9hZC9zZWFyY2hfaW1hZ2VzL3M3S2JGdkNxZ0hFTg.jpg?x-oss-process=image/resize,w_1560,h_1560/format,webp&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVjRHUExVaDlQY1ZXRjVQdERnVG5ScC9zYW5kYm94L3NsaWRlc19yZXNvdXJjZV9pMmxkNDMza3QxZnkwaXF4eHc2NTAtNDdkNzkxM2QtZTJiLXByb2QtdXMxXzE3Njc4MTU0ODcyNzRfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzVndiRzloWkM5elpXRnlZMmhmYVcxaFoyVnpMM00zUzJKR2RrTnhaMGhGVGcuanBnP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTU2MCxoXzE1NjAvZm9ybWF0LHdlYnAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=EzavkQy9FgYg-gdJLVxZpw5cHT0Xo7EYe6Y7PH31ooBW3f9MR~dzzs~z7dLrF7-WMeInEBe8Qz0NhhAFuIBrG2U2zewB5LWrZmLsMW~dSTrV5f1YgKT1EtQB1s-YSN-hKYn36HghNYe1m2xq-zjWB8fOLKeR0P6BHcq4ZXvCHcq07OZgEiRlA3p1uJ829-EhohxkOgbE6dhWek3OEpfroToRKnZK0q~slGbMKthss2Y3-btYzv5~DuxdS0YbmdmEFHPh-tZipRj-f~ZNXx4hAvxXG3aL~hFGr0TAnRQE7zyYwo2rxf-T6L8G7DueExmAzlMANYYmjeDjdtWEkw4JiQ__" alt="Dreams Onyx Resort Overview">
+            </div>
+            <div class="image-container">
+                <img src="https://private-us-east-1.manuscdn.com/sessionFile/V4GPLUh9PcVWF5PtDgTnRp/sandbox/slides_resource_i2ld433kt1fy0iqxxw650-47d7913d-e2b-prod-us1_1767815487274_na1fn_L2hvbWUvdWJ1bnR1L3VwbG9hZC9zZWFyY2hfaW1hZ2VzLzE4dU1rbmM4a0N5Nw.jpg?x-oss-process=image/resize,w_1560,h_1560/format,webp&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVjRHUExVaDlQY1ZXRjVQdERnVG5ScC9zYW5kYm94L3NsaWRlc19yZXNvdXJjZV9pMmxkNDMza3QxZnkwaXF4eHc2NTAtNDdkNzkxM2QtZTJiLXByb2QtdXMxXzE3Njc4MTU0ODcyNzRfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzVndiRzloWkM5elpXRnlZMmhmYVcxaFoyVnpMekU0ZFUxcmJtTTRhME41TncuanBnP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTU2MCxoXzE1NjAvZm9ybWF0LHdlYnAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=vRlwhDzl7InkivN063KqFyAcWxOO1HtlS2wzeORvNgOmmjHCwzY3xdNZH9cBoea7KFPC1Ye-X0Fbepm7bA1yYG~Wnu1bCXJRt8v9uibvb6-w2p6UzJxy9aWWvHM3RGKeYuCS~il1X-kZqhIYSqhinkZves42VEBoC3KeMQBhvr7IkfF3CnISOg8NH48LQNBFszbcfNZa~T6hp-U3GYO7di4BXL2lyyq0Tuq8d7BWWJ98gkfG~Iw-gPhQBVd4ijm5jeKQ8I5OJJG3j9XVc0NCK04n6t6DqylkXSis-Ol-bd~emuG--zBeiZuT7PQ9XjrSPBsRPSAekjOLqbAXyQqiLQ__" alt="Dreams Onyx Pool Area">
+            </div>
+            <div class="image-container">
+                <img src="https://private-us-east-1.manuscdn.com/sessionFile/V4GPLUh9PcVWF5PtDgTnRp/sandbox/slides_resource_i2ld433kt1fy0iqxxw650-47d7913d-e2b-prod-us1_1767815487274_na1fn_L2hvbWUvdWJ1bnR1L3VwbG9hZC9zZWFyY2hfaW1hZ2VzL1lMU0RPYmkzbUZzOQ.jpg?x-oss-process=image/resize,w_1560,h_1560/format,webp&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVjRHUExVaDlQY1ZXRjVQdERnVG5ScC9zYW5kYm94L3NsaWRlc19yZXNvdXJjZV9pMmxkNDMza3QxZnkwaXF4eHc2NTAtNDdkNzkxM2QtZTJiLXByb2QtdXMxXzE3Njc4MTU0ODcyNzRfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzVndiRzloWkM5elpXRnlZMmhmYVcxaFoyVnpMMWxNVTBSUFlta3piVVp6T1EuanBnP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTU2MCxoXzE1NjAvZm9ybWF0LHdlYnAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=s3wl1f7x16UOKfzRJ05tpNkI2vbI9sNvuMTj3MDGoKyM51EUU3xjtrNcundhK1mFPU07-BoUu-HtciHC22qlG~mJPRb2WSHClNr53mBpqdCzMMuOd866MTCFoS4j-k1-bdbzvk4t2elwo2hQTJ715-MhVNv5DqNcwKM53xiUDZq8mElf0d6UeB~9t9DhnmboWRp0PjvbVcPXy--jpnrDj-EzgVmtVkDA4COpJ4wkzv6ZExuaTM4fCjbM0d4UazmXq-QWupDe7h3LgcFm9IWFbTFg-Ym0MyCbxP-q8eekWCN0QHxiVdFyCBtABMcxOYAPx~gc-Hy5MDXO88hSGzHNtA__" alt="Dreams Onyx Aerial View">
+            </div>
+        </div>
+    </div>
+    <script>
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                navigateTo('slide4.html');
+            } else if (e.key === 'ArrowRight') {
+                navigateTo('slide6.html');
+            } else if (e.key === 'Home') {
+                navigateTo('index.html');
+            }
+        });
+    </script>
+</body>
+</html>

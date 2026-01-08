@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;700&family=Inter:wght@400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        .slide-container {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #F4F1EA;
+            display: flex;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        .image-section {
+            width: 60%;
+            min-height: 100vh;
+            height: 100vh;
+            position: relative;
+        }
+        .image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .content-section {
+            width: 40%;
+            padding-top: 80px;
+            padding-left: 60px;
+            padding-right: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .accent-bar {
+            width: 60px;
+            height: 4px;
+            background-color: #D4A373;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 64px;
+            color: #1A3C40;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            color: #D4A373;
+            font-weight: 700;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+        .crew-info {
+            margin-top: auto;
+            padding-bottom: 60px;
+        }
+        .crew-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #2D5F5D;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .crew-list {
+            list-style: none;
+            font-size: 16px;
+            color: #2D5F5D;
+            line-height: 1.6;
+        }
+        .crew-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .crew-item i {
+            margin-right: 10px;
+            color: #D4A373;
+            font-size: 12px;
+        }
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        .nav-button {
+            width: 50px;
+            height: 50px;
+            background-color: #1A3C40;
+            color: #F4F1EA;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .nav-button:hover {
+            background-color: #D4A373;
+            transform: scale(1.1);
+        }
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-button:disabled:hover {
+            transform: none;
+        }
+        .slide-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: #2D5F5D;
+            background-color: rgba(244, 241, 234, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-indicator">Inicio</div>
+    <div class="navigation">
+        <button class="nav-button" onclick="navigateTo('slide1.html')" title="Siguiente">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+    <div class="slide-container">
+        <div class="image-section">
+            <img src="https://private-us-east-1.manuscdn.com/sessionFile/V4GPLUh9PcVWF5PtDgTnRp/sandbox/slides_resource_i2ld433kt1fy0iqxxw650-47d7913d-e2b-prod-us1_1767815455329_na1fn_L2hvbWUvdWJ1bnR1L3ByZXNlbnRhdGlvbl9pbWFnZXMvYmVhY2hfMQ.jpg?x-oss-process=image/resize,w_1560,h_1560/format,webp&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVjRHUExVaDlQY1ZXRjVQdERnVG5ScC9zYW5kYm94L3NsaWRlc19yZXNvdXJjZV9pMmxkNDMza3QxZnkwaXF4eHc2NTAtNDdkNzkxM2QtZTJiLXByb2QtdXMxXzE3Njc4MTU0NTUzMjlfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzQnlaWE5sYm5SaGRHbHZibDlwYldGblpYTXZZbVZoWTJoZk1RLmpwZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE1NjAsaF8xNTYwL2Zvcm1hdCx3ZWJwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=I3KR9m01Qa90SWOskIHcAGQLTWPrIABYZpY2YNOoYfV7Q5XKfWEq5NhVUuWELYvVmtrqz-jUUW9cQ7G~bhla8Lwn8jQMUSvFT-A3rS7Rmu1WaTBzFUX5bDFpEHRWB8TmIzgRDKFVRYH2mi-e80Q8WwDIrupoWo97kfPooamNi4PaK5cIMIVkl4BRcWWenF2wV~TERJV4SLMvfNDWKYOkT7mnWGBFROIH5cqGnUP42akeh9BZA4hkTOt8XpsAi4hKQ-WKEUCxa-bspRDGNTZ1jkQRn0CIZCurbDMXrugVxew42FUptnti206h95~pqnJSSRrkPF8IeHWUBEQDNEmygQ__" alt="Caribbean Beach Aerial View">
+        </div>
+        <div class="content-section">
+            <div class="accent-bar"></div>
+            <h1>Frontier vs<br>Caribe</h1>
+            <h2>¿Por qué Isaac se merece una pausa antes de comprar "La Bestia"?</h2>
+            
+            <div class="crew-info">
+                <p class="crew-title">La Tripulación</p>
+                <ul class="crew-list">
+                    <li class="crew-item"><i class="fas fa-calendar-alt"></i> 23 - 27 de Septiembre</li>
+                    <li class="crew-item"><i class="fas fa-users"></i> Isaac, Ale y Roman </li>
+                    <li class="crew-item"><i class="fas fa-cocktail"></i> Pita y Ali </li>
+                    <li class="crew-item"><i class="fas fa-leaf"></i> Mariana y Néstor </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                navigateTo('slide1.html');
+            }
+        });
+    </script>
+</body>
+</html>
