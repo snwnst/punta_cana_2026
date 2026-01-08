@@ -794,8 +794,7 @@
             gap: 40px;
             max-width: 1400px;
             margin: 0 auto;
-            align-items: stretch;
-            grid-auto-rows: 1fr; /* Asegura que todas las filas tengan la misma altura */
+            align-items: start; /* Alinea desde arriba para evitar estiramiento forzado */
         }
 
         .option-card-large {
@@ -810,8 +809,7 @@
             backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
-            height: 100%;
-            min-height: 0; /* Permite que flex funcione correctamente */
+            align-items: stretch; /* Asegura que todos los elementos internos se estiren igual */
         }
 
         .option-card-large.is-active {
@@ -840,6 +838,8 @@
             letter-spacing: -0.01em;
             line-height: 1.2;
             min-height: calc(1.2em * 2); /* Altura mínima para títulos de 2 líneas */
+            height: calc(1.2em * 2); /* Altura fija para alineación perfecta */
+            overflow: hidden;
         }
 
         .option-tag {
@@ -852,6 +852,7 @@
             margin-top: 0;
             letter-spacing: 0.1em;
             display: block;
+            height: 16px; /* Altura fija para alineación consistente */
         }
 
         .option-description {
@@ -862,12 +863,11 @@
             flex: 1 1 auto;
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 4; /* Reducido para mejor alineación */
+            -webkit-line-clamp: 4;
             line-clamp: 4;
             overflow: hidden;
             margin-bottom: 0;
-            min-height: calc(1.7em * 4); /* Altura mínima basada en line-height */
-            max-height: calc(1.7em * 4); /* Altura máxima para mantener consistencia */
+            min-height: calc(1.7em * 4); /* Altura fija para consistencia */
         }
 
         /* Mini gallery inside option cards (cycles through all hotel images) */
@@ -877,12 +877,14 @@
             display: grid;
             gap: 12px;
             flex-shrink: 0; /* Evita que se comprima */
+            min-height: 180px; /* Altura mínima consistente */
         }
 
         .option-gallery .image-frame {
             height: 180px;
             border-radius: 16px;
             width: 100%;
+            flex-shrink: 0;
         }
 
         .option-card-large:hover .option-gallery .image-frame {
@@ -1298,6 +1300,37 @@
             width: calc((100% - 200px) / 5);
             min-width: 220px;
             box-sizing: border-box;
+            vertical-align: bottom;
+        }
+
+        /* Hotel header with image */
+        .hotel-header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hotel-header-image {
+            width: 80px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--glow-soft);
+            transition: transform 0.3s var(--ease-snap), box-shadow 0.3s var(--ease-smooth);
+        }
+
+        .comparison-table-large th:hover .hotel-header-image {
+            transform: scale(1.08);
+            box-shadow: var(--glow-strong);
+            border-color: color-mix(in srgb, var(--accent-2) 60%, transparent);
+        }
+
+        .hotel-header-name {
+            font-size: 11px;
+            line-height: 1.3;
+            text-align: center;
         }
 
         .comparison-table-large tbody tr {
@@ -1361,6 +1394,15 @@
             box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
             padding: 20px 18px;
             box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-icon {
+            font-size: 16px;
+            opacity: 0.9;
+            flex-shrink: 0;
         }
 
         .comparison-table-large .highlight-text {
@@ -1373,6 +1415,40 @@
             padding: 2px 6px;
             border-radius: 4px;
             display: inline-block;
+            position: relative;
+        }
+
+        /* Visual badges for standout features */
+        .comparison-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, 
+                color-mix(in srgb, var(--accent-3) 25%, rgba(255,255,255,0.08)),
+                color-mix(in srgb, var(--accent-2) 25%, rgba(255,255,255,0.08))
+            );
+            border: 1px solid color-mix(in srgb, var(--accent-2) 40%, transparent);
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-0);
+            margin: 2px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .comparison-badge-icon {
+            font-size: 10px;
+        }
+
+        /* Better visual hierarchy for table cells */
+        .comparison-table-large tbody td:not(.category-cell) {
+            position: relative;
+        }
+
+        .comparison-table-large tbody td:not(.category-cell) strong {
+            color: var(--text-0);
+            font-weight: 700;
         }
 
         /* Mejoras visuales para las celdas de hoteles */
@@ -1822,11 +1898,15 @@
             background: transparent;
             text-align: center;
             color: var(--text-0);
+            position: relative;
+            z-index: 1; /* Asegura que el contenido esté por encima de cualquier overlay */
         }
 
         .final-content {
             max-width: 1000px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2; /* Asegura que el contenido esté por encima */
         }
 
         .final-title {
@@ -1846,6 +1926,7 @@
             margin-bottom: 60px;
             font-weight: 400;
             letter-spacing: -0.01em;
+            transition: color 0.8s var(--ease-smooth);
         }
 
         .comparison-box {
@@ -1915,11 +1996,11 @@
             box-shadow: var(--glow-strong);
         }
 
-        /* Sticky desktop recap rail */
+        /* Sticky desktop recap rail - Hidden by default, appears on hover */
         .recap-rail {
             position: fixed;
             top: 18px;
-            left: 24px;
+            left: -200px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -1930,6 +2011,27 @@
             background: rgba(8, 8, 22, 0.55);
             backdrop-filter: blur(12px);
             box-shadow: var(--glow-soft);
+            transition: left 0.4s var(--ease-smooth);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Show on hover near left edge */
+        body:hover .recap-rail {
+            left: 24px;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Trigger zone on left edge */
+        .recap-rail-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 100vh;
+            z-index: 9998;
+            pointer-events: auto;
         }
 
         .recap-rail-header {
@@ -2047,7 +2149,8 @@
     <!-- Scroll Progress Bar -->
     <div class="scroll-progress"></div>
 
-    <!-- Sticky recap rail (desktop) -->
+    <!-- Sticky recap rail (desktop) - Hidden by default, appears on hover -->
+    <div class="recap-rail-trigger" aria-hidden="true"></div>
     <nav class="recap-rail" id="recapRail" aria-label="Capítulos">
         <div class="recap-rail-header">
             <div class="recap-rail-title">Recap</div>
@@ -2950,45 +3053,90 @@
             <thead>
                 <tr>
                     <th>Categoría</th>
-                    <th>Lopesan Costa Bávaro</th>
-                    <th>Dreams Onyx</th>
-                    <th>Serenade Punta Cana</th>
-                    <th>Iberostar Waves</th>
-                    <th>Barceló Bávaro</th>
+                    <th>
+                        <div class="hotel-header-content">
+                            <img src="assets/img/lopesan/img1.jpg" alt="Lopesan" class="hotel-header-image" loading="lazy">
+                            <div class="hotel-header-name">Lopesan<br>Costa Bávaro</div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="hotel-header-content">
+                            <img src="assets/img/onyx/1120x700-11.jpg" alt="Dreams Onyx" class="hotel-header-image" loading="lazy">
+                            <div class="hotel-header-name">Dreams<br>Onyx</div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="hotel-header-content">
+                            <img src="assets/img/serenade/1120x629.jpg" alt="Serenade" class="hotel-header-image" loading="lazy">
+                            <div class="hotel-header-name">Serenade<br>Punta Cana</div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="hotel-header-content">
+                            <img src="assets/img/Iberostar/727603082.jpg" alt="Iberostar" class="hotel-header-image" loading="lazy">
+                            <div class="hotel-header-name">Iberostar<br>Waves</div>
+                        </div>
+                    </th>
+                    <th>
+                        <div class="hotel-header-content">
+                            <img src="assets/img/barcelo/17740244.jpg" alt="Barceló" class="hotel-header-image" loading="lazy">
+                            <div class="hotel-header-name">Barceló<br>Bávaro</div>
+                        </div>
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="category-cell">Gastronomía</td>
-                    <td><span class="highlight-text">7 restaurantes</span> a la carta. Política de <span class="highlight-text">sin reserva</span> en la mayoría. Estética visual impecable.</td>
-                    <td><span class="highlight-text">17 opciones</span> totales (incluye Breathless). Política <span class="highlight-text">NUNCA reservas</span>.</td>
+                    <td class="category-cell"><span class="category-icon">🍽️</span> Gastronomía</td>
+                    <td>
+                        <span class="comparison-badge"><span class="comparison-badge-icon">⭐</span>7 restaurantes</span> a la carta. 
+                        <span class="comparison-badge"><span class="comparison-badge-icon">🚫</span>Sin reserva</span> en la mayoría. 
+                        Estética visual impecable.
+                    </td>
+                    <td>
+                        <span class="comparison-badge"><span class="comparison-badge-icon">🏆</span>17 opciones</span> totales (incluye Breathless). 
+                        <span class="comparison-badge"><span class="comparison-badge-icon">🚫</span>NUNCA reservas</span>.
+                    </td>
                     <td>Opciones gastronómicas variadas con buena calidad.</td>
                     <td>6 restaurantes temáticos con buena comida.</td>
                     <td>11 opciones con reserva estricta.</td>
                 </tr>
                 <tr>
-                    <td class="category-cell">Bebidas</td>
+                    <td class="category-cell"><span class="category-icon">🍸</span> Bebidas</td>
                     <td>Marcas internacionales estándar y algunas premium. Calidad consistente.</td>
-                    <td><span class="highlight-text">Top Premium</span> incluido (Don Julio, Grey Goose). Mixología superior.</td>
+                    <td>
+                        <span class="comparison-badge"><span class="comparison-badge-icon">🥃</span>Top Premium</span> incluido (Don Julio, Grey Goose). 
+                        Mixología superior.
+                    </td>
                     <td>Calidad estándar.</td>
                     <td>Calidad estándar.</td>
                     <td>Calidad estándar.</td>
                 </tr>
                 <tr>
-                    <td class="category-cell">Para Niños</td>
-                    <td><span class="highlight-text">Splash Island</span> y Miniclub Panchi World. Diseño moderno y seguro.</td>
-                    <td><span class="highlight-text">Jungle Waterpark</span> con toboganes rápidos y Río Lento.</td>
+                    <td class="category-cell"><span class="category-icon">👶</span> Para Niños</td>
+                    <td>
+                        <span class="comparison-badge"><span class="comparison-badge-icon">🏝️</span>Splash Island</span> y Miniclub Panchi World. 
+                        Diseño moderno y seguro.
+                    </td>
+                    <td>
+                        <span class="comparison-badge"><span class="comparison-badge-icon">🎢</span>Jungle Waterpark</span> con toboganes rápidos y Río Lento.
+                    </td>
                     <td>Actividades familiares disponibles.</td>
-                    <td><span class="highlight-text">Star Camp</span> (El mejor club de niños).</td>
+                    <td>
+                        <span class="comparison-badge"><span class="comparison-badge-icon">⭐</span>Star Camp</span> (El mejor club de niños).
+                    </td>
                     <td>Actividades para niños incluidas.</td>
                 </tr>
                 <tr>
-                    <td class="category-cell">La Playa</td>
+                    <td class="category-cell"><span class="category-icon">🏖️</span> La Playa</td>
                     <td>Muy buena, amplia, ubicada en la zona de Bávaro. Oleaje moderado.</td>
                     <td>Arena dorada, mar un poco más picado (zona Atlántico).</td>
                     <td>Buena playa frente al hotel.</td>
                     <td>Playa familiar y tranquila.</td>
-                    <td><span class="highlight-text">La mejor playa (10/10)</span>. Agua turquesa sin olas.</td>
+                    <td>
+                        <span class="comparison-badge"><span class="comparison-badge-icon">🏆</span>La mejor playa (10/10)</span>. 
+                        Agua turquesa sin olas.
+                    </td>
                 </tr>
                 <tr>
                     <td class="category-cell">Características & Servicios Clave</td>
@@ -3939,8 +4087,8 @@
             });
         });
 
-        // ========== COMPARISON TABLE (Mejorado) ==========
-        // Header con slide down
+        // ========== COMPARISON TABLE (Mejorado con más impacto visual) ==========
+        // Header con slide down + imágenes que aparecen escalonadas
         gsap.from('#comparison .comparison-table-large thead', {
             y: -80,
             opacity: 0,
@@ -3952,7 +4100,24 @@
             }
         });
 
-        // Filas con reveal desde izquierda (estilo Graffico)
+        // Imágenes de hoteles aparecen con scale y glow
+        gsap.from('#comparison .hotel-header-image', {
+            scale: 0.6,
+            opacity: 0,
+            rotation: -5,
+            stagger: {
+                amount: 0.4,
+                from: 'start'
+            },
+            duration: 0.8,
+            ease: 'back.out(1.4)',
+            scrollTrigger: {
+                trigger: '#comparison .comparison-table-large',
+                start: 'top 75%'
+            }
+        });
+
+        // Filas con reveal desde izquierda + badges que aparecen después
         gsap.from('#comparison .comparison-table-large tbody tr', {
             x: -150,
             opacity: 0,
@@ -3969,7 +4134,38 @@
             }
         });
 
-        // Highlight text con pulse sutil
+        // Badges aparecen con bounce después de las filas
+        gsap.from('#comparison .comparison-badge', {
+            scale: 0,
+            opacity: 0,
+            rotation: -10,
+            stagger: {
+                amount: 0.3,
+                from: 'random'
+            },
+            duration: 0.5,
+            ease: 'back.out(1.6)',
+            scrollTrigger: {
+                trigger: '#comparison .comparison-table-large',
+                start: 'top 60%'
+            }
+        });
+
+        // Iconos de categoría con pulse inicial
+        gsap.from('#comparison .category-icon', {
+            scale: 0,
+            rotation: 180,
+            opacity: 0,
+            duration: 0.6,
+            ease: 'elastic.out(1, 0.5)',
+            stagger: 0.1,
+            scrollTrigger: {
+                trigger: '#comparison .comparison-table-large',
+                start: 'top 70%'
+            }
+        });
+
+        // Highlight text con pulse sutil mejorado
         gsap.utils.toArray('#comparison .highlight-text').forEach(highlight => {
             gsap.to(highlight, {
                 scale: 1.02,
@@ -3981,6 +4177,26 @@
                     trigger: highlight,
                     start: 'top 80%'
                 }
+            });
+        });
+
+        // Badges con hover effect mejorado (glow)
+        document.querySelectorAll('#comparison .comparison-badge').forEach(badge => {
+            badge.addEventListener('mouseenter', () => {
+                gsap.to(badge, {
+                    scale: 1.08,
+                    boxShadow: '0 0 20px rgba(43, 231, 255, 0.4)',
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+            badge.addEventListener('mouseleave', () => {
+                gsap.to(badge, {
+                    scale: 1,
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
             });
         });
 
@@ -4141,17 +4357,17 @@
             });
         }
 
-        // Texto emocional con reveal mejorado
+        // Texto emocional con reveal mejorado (sin clipPath que puede ocultar texto)
         gsap.from('#final .emotional-text', {
             opacity: 0,
             y: 60,
-            clipPath: 'inset(0 0 100% 0)',
             duration: 1.5,
             ease: 'power2.inOut',
             delay: 0.4,
             scrollTrigger: {
                 trigger: '#final .emotional-text',
-                start: 'top 80%'
+                start: 'top 80%',
+                toggleActions: 'play none none reverse' // Asegura que se muestre siempre
             }
         });
 
@@ -4180,7 +4396,7 @@
             }
         });
 
-        // CTA con animación mejorada
+        // CTA con animación mejorada + efecto persuasivo
         gsap.from('#final .cta-text', {
             scale: 0.6,
             opacity: 0,
@@ -4188,11 +4404,12 @@
             ease: 'elastic.out(1, 0.5)',
             scrollTrigger: {
                 trigger: '#final .cta-text',
-                start: 'top 85%'
+                start: 'top 85%',
+                toggleActions: 'play none none reverse' // Asegura que se muestre siempre
             }
         });
 
-        // Pulse continuo mejorado
+        // Pulse continuo mejorado con glow effect
         gsap.to('#final .cta-text', {
             scale: 1.08,
             repeat: -1,
@@ -4205,11 +4422,45 @@
             }
         });
 
+        // Reforzar mensaje persuasivo: comparación visual más impactante
+        gsap.from('#final .comparison-item', {
+            y: 60,
+            opacity: 0,
+            scale: 0.9,
+            stagger: {
+                amount: 0.4,
+                from: 'start'
+            },
+            duration: 1,
+            ease: 'power3.out',
+            scrollTrigger: {
+                trigger: '#final .comparison-box',
+                start: 'top 75%'
+            }
+        });
+
+        // Efecto de "llamada a la acción" más fuerte en el texto emocional (sin hacer transparente)
+        const emotionalText = document.querySelector('#final .emotional-text');
+        if (emotionalText) {
+            // En lugar de hacer transparente, mejoramos el color gradualmente
+            gsap.to(emotionalText, {
+                color: 'var(--text-0)', // Cambia a color más brillante
+                duration: 0.8,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: emotionalText,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
+
         // ========== EFECTOS GLOBALES (Estilo Graffico) ==========
-        // Parallax sutil en todas las secciones
+        // Parallax sutil en todas las secciones (excluyendo final para evitar problemas de overlay)
         gsap.utils.toArray('.section').forEach((section, index) => {
             // Avoid transforms on pinned chapters (transform + pin can cause visual overlap)
-            if (index > 0 && !section.matches('#options, #hotels, #economic')) {
+            // También excluimos la sección final para evitar problemas de overlay
+            if (index > 0 && !section.matches('#options, #hotels, #economic, #final')) {
                 gsap.to(section, {
                     yPercent: -4,
                     ease: 'none',
