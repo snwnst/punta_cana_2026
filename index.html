@@ -795,6 +795,7 @@
             max-width: 1400px;
             margin: 0 auto;
             align-items: stretch;
+            grid-auto-rows: 1fr; /* Asegura que todas las filas tengan la misma altura */
         }
 
         .option-card-large {
@@ -810,6 +811,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            min-height: 0; /* Permite que flex funcione correctamente */
         }
 
         .option-card-large.is-active {
@@ -823,6 +825,8 @@
             right: 24px;
             font-size: 28px;
             opacity: 0.9;
+            z-index: 1;
+            pointer-events: none;
         }
 
         .option-card-title {
@@ -831,7 +835,11 @@
             font-weight: 800;
             color: var(--text-0);
             margin-bottom: 16px;
+            margin-top: 0;
+            margin-right: 50px; /* Espacio para el badge */
             letter-spacing: -0.01em;
+            line-height: 1.2;
+            min-height: calc(1.2em * 2); /* Altura mínima para títulos de 2 líneas */
         }
 
         .option-tag {
@@ -841,7 +849,9 @@
             color: var(--muted);
             text-transform: uppercase;
             margin-bottom: 20px;
+            margin-top: 0;
             letter-spacing: 0.1em;
+            display: block;
         }
 
         .option-description {
@@ -849,24 +859,30 @@
             line-height: 1.7;
             color: var(--text-1);
             font-weight: 400;
+            flex: 1 1 auto;
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 5; /* keep cards visually aligned */
-            line-clamp: 5; /* standard */
+            -webkit-line-clamp: 4; /* Reducido para mejor alineación */
+            line-clamp: 4;
             overflow: hidden;
+            margin-bottom: 0;
+            min-height: calc(1.7em * 4); /* Altura mínima basada en line-height */
+            max-height: calc(1.7em * 4); /* Altura máxima para mantener consistencia */
         }
 
         /* Mini gallery inside option cards (cycles through all hotel images) */
         .option-gallery {
-            margin-top: 22px;
+            margin-top: auto; /* Empuja la galería al final */
+            padding-top: 24px;
             display: grid;
             gap: 12px;
-            margin-top: auto; /* keep gallery aligned to bottom across cards */
+            flex-shrink: 0; /* Evita que se comprima */
         }
 
         .option-gallery .image-frame {
             height: 180px;
             border-radius: 16px;
+            width: 100%;
         }
 
         .option-card-large:hover .option-gallery .image-frame {
@@ -964,6 +980,80 @@
             border-right: 1px solid var(--hairline);
             backdrop-filter: blur(10px);
             overscroll-behavior: contain;
+            position: relative;
+        }
+
+        /* Budget Card integrado en cada hotel */
+        .hotel-budget-card {
+            background: linear-gradient(135deg,
+                color-mix(in srgb, var(--accent-2) 25%, rgba(255,255,255,0.08)),
+                color-mix(in srgb, var(--accent-1) 25%, rgba(255,255,255,0.08))
+            );
+            padding: 20px 24px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            border: 1px solid color-mix(in srgb, var(--accent-2) 40%, var(--hairline));
+            box-shadow: var(--glow-soft), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+            backdrop-filter: blur(10px);
+        }
+
+        .hotel-budget-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .hotel-budget-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+        }
+
+        .hotel-budget-amount {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-0);
+            letter-spacing: -0.02em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .hotel-budget-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .hotel-budget-detail {
+            font-size: 12px;
+            color: var(--text-1);
+            line-height: 1.5;
+        }
+
+        .hotel-budget-detail strong {
+            display: inline;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-0);
+        }
+
+        /* Animación de entrada del budget card en hotel */
+        .hotel-budget-card {
+            animation: budgetCardFadeIn 0.6s var(--ease-smooth) 0.2s both;
+        }
+
+        @keyframes budgetCardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hotel-text::-webkit-scrollbar {
@@ -1146,46 +1236,174 @@
 
         .comparison-table-large {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             border-collapse: collapse;
             background: rgba(255, 255, 255, 0.06);
             border-radius: var(--radius-card);
             overflow: hidden;
-            box-shadow: var(--glow-soft);
+            overflow-x: auto;
+            box-shadow: var(--glow-soft), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
             border: 1px solid var(--hairline);
             backdrop-filter: blur(10px);
+            display: block;
+        }
+
+        .comparison-table-large thead,
+        .comparison-table-large tbody {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .comparison-table-large thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .comparison-table-large th {
             background: linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 55%, #0B0B1C), color-mix(in srgb, var(--accent-1) 55%, #0B0B1C));
             color: var(--text-0);
-            padding: 20px;
+            padding: 20px 18px;
             text-align: left;
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .comparison-table-large th:first-child {
+            width: 200px;
+            min-width: 200px;
+            max-width: 200px;
+            background: linear-gradient(135deg, 
+                color-mix(in srgb, var(--accent-2) 45%, rgba(255,255,255,0.08)),
+                color-mix(in srgb, var(--accent-1) 45%, rgba(255,255,255,0.08))
+            );
+            border-right: 2px solid color-mix(in srgb, var(--accent-2) 60%, transparent);
+            padding: 20px 18px;
+        }
+
+        .comparison-table-large th:last-child {
+            border-right: none;
+        }
+
+        .comparison-table-large th:not(:first-child) {
+            width: calc((100% - 200px) / 5);
+            min-width: 220px;
+            box-sizing: border-box;
+        }
+
+        .comparison-table-large tbody tr {
+            transition: background-color 0.3s var(--ease-smooth);
+        }
+
+        .comparison-table-large tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .comparison-table-large tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .comparison-table-large tbody tr:nth-child(even):hover {
+            background-color: rgba(255, 255, 255, 0.04);
         }
 
         .comparison-table-large td {
-            padding: 20px;
+            padding: 20px 18px;
             border-bottom: 1px solid var(--hairline);
-            font-size: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
             vertical-align: top;
             color: var(--text-1);
+            line-height: 1.7;
+            transition: color 0.3s var(--ease-smooth);
+            box-sizing: border-box;
+        }
+
+        .comparison-table-large td:first-child {
+            width: 200px;
+            min-width: 200px;
+            max-width: 200px;
+            padding: 20px 18px;
+        }
+
+        .comparison-table-large td:not(:first-child) {
+            width: calc((100% - 200px) / 5);
+            min-width: 220px;
+        }
+
+        .comparison-table-large td:last-child {
+            border-right: none;
         }
 
         .comparison-table-large .category-cell {
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-0);
-            background-color: rgba(255, 255, 255, 0.06);
-            width: 200px;
+            background: linear-gradient(135deg,
+                color-mix(in srgb, var(--accent-2) 20%, rgba(255,255,255,0.08)),
+                color-mix(in srgb, var(--accent-1) 20%, rgba(255,255,255,0.08))
+            );
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            border-right: 2px solid color-mix(in srgb, var(--accent-2) 50%, transparent);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+            padding: 20px 18px;
+            box-sizing: border-box;
         }
 
         .comparison-table-large .highlight-text {
             color: var(--text-0);
             font-weight: 700;
+            background: linear-gradient(90deg, 
+                color-mix(in srgb, var(--accent-2) 30%, transparent),
+                color-mix(in srgb, var(--accent-1) 30%, transparent)
+            );
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Mejoras visuales para las celdas de hoteles */
+        .comparison-table-large tbody td:not(.category-cell) {
+            position: relative;
+        }
+
+        .comparison-table-large tbody td:not(.category-cell):hover {
+            color: var(--text-0);
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        /* Responsive: tabla scroll horizontal en móviles */
+        @media (max-width: 1200px) {
+            .comparison-table-large {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .comparison-table-large th:first-child {
+                position: sticky;
+                left: 0;
+                z-index: 2;
+            }
+            
+            .comparison-table-large .category-cell {
+                position: sticky;
+                left: 0;
+                z-index: 1;
+            }
         }
 
         /* ===== Budget Section (cost clarity) ===== */
@@ -1444,6 +1662,20 @@
 
         @media (max-width: 860px) {
             .budget-why-grid { grid-template-columns: 1fr; }
+            
+            /* Budget card más compacto en móvil */
+            .hotel-budget-card {
+                padding: 16px 18px;
+            }
+            
+            .hotel-budget-amount {
+                font-size: 24px;
+            }
+            
+            .hotel-budget-details {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
         }
 
         /* Verdict Section */
@@ -1825,8 +2057,8 @@
         <a href="#problem" data-target="problem"><span class="recap-dot" aria-hidden="true"></span>Realidad</a>
         <a href="#economic" data-target="economic"><span class="recap-dot" aria-hidden="true"></span>Razones</a>
         <a href="#options" data-target="options"><span class="recap-dot" aria-hidden="true"></span>Opciones</a>
-        <a href="#budget" data-target="budget"><span class="recap-dot" aria-hidden="true"></span>Budget</a>
         <a href="#hotels" data-target="hotels"><span class="recap-dot" aria-hidden="true"></span>Hoteles</a>
+        <a href="#budget" data-target="budget"><span class="recap-dot" aria-hidden="true"></span>Budget</a>
         <a href="#comparison" data-target="comparison"><span class="recap-dot" aria-hidden="true"></span>Comparativa</a>
         <a href="#verdict" data-target="verdict"><span class="recap-dot" aria-hidden="true"></span>Veredicto</a>
         <a href="#final" data-target="final"><span class="recap-dot" aria-hidden="true"></span>Final</a>
@@ -2045,132 +2277,30 @@
         <p class="options-prompt">¿Priorizamos el "Wow" o el ahorro para el motor?</p>
     </section>
 
-    <!-- SECTION 4.5: BUDGET -->
-    <section class="section budget-section" id="budget" data-a1="#2BE7FF" data-a2="#B7FF2B" data-a3="#FF2BD6">
-        <div class="budget-wrap">
-            <h1 class="section-title">Budget Check</h1>
-            <p class="section-subtitle">Costos finales por pareja (hotel + vuelos) y el “por qué” de cada opción</p>
-
-            <table class="budget-table" aria-label="Costos por hotel">
-                <thead>
-                    <tr>
-                        <th>Hotel</th>
-                        <th>Costo base (pareja)</th>
-                        <th>Vuelos</th>
-                        <th>Costo final (pareja)</th>
-                        <th>Pago en 8 meses</th>
-                        <th>Tags</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="budget-row is-premium" data-monthly="5415">
-                        <td class="budget-hotel">Lopesan Costa Bávaro Resort Spa &amp; Casino</td>
-                        <td class="budget-money">$43,323</td>
-                        <td class="budget-money">Arajet AIFA<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
-                        <td class="budget-money"><strong>$43,323</strong></td>
-                        <td class="budget-money"><strong>$5,415 / mes</strong></td>
-                        <td>
-                            <div class="budget-tags">
-                                <span class="tier-pill best">Best option</span>
-                                <span class="tier-pill wow">Factor "WOW"</span>
-                                <span class="tier-pill premium">🏆 Premium</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="budget-row is-premium" data-monthly="4996">
-                        <td class="budget-hotel">Dreams Onyx Resort &amp; Spa All Inclusive</td>
-                        <td class="budget-money">$39,972</td>
-                        <td class="budget-money">Arajet AIFA<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
-                        <td class="budget-money"><strong>$39,972</strong></td>
-                        <td class="budget-money"><strong>$4,996 / mes</strong></td>
-                        <td>
-                            <div class="budget-tags">
-                                <span class="tier-pill party">Fiesta + Lujo</span>
-                                <span class="tier-pill premium">✨ Premium</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="budget-row" data-monthly="4545">
-                        <td class="budget-hotel">Serenade Punta Cana Beach &amp; Spa Resort</td>
-                        <td class="budget-money">$25,026</td>
-                        <td class="budget-money">Arajet AIFA<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
-                        <td class="budget-money"><strong>$36,359.30</strong></td>
-                        <td class="budget-money"><strong>$4,545 / mes</strong></td>
-                        <td>
-                            <div class="budget-tags">
-                                <span class="tier-pill save">Ahorro inteligente</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="budget-row" data-monthly="4872">
-                        <td class="budget-hotel">Iberostar Waves Dominicana</td>
-                        <td class="budget-money">$27,640</td>
-                        <td class="budget-money">Arajet AIFA<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
-                        <td class="budget-money"><strong>$38,973.30</strong></td>
-                        <td class="budget-money"><strong>$4,872 / mes</strong></td>
-                        <td>
-                            <div class="budget-tags">
-                                <span class="tier-pill family">Naturaleza + Niños</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="budget-row" data-monthly="5327">
-                        <td class="budget-hotel">Barceló Bávaro Palace</td>
-                        <td class="budget-money">$31,280</td>
-                        <td class="budget-money">Arajet AIFA<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
-                        <td class="budget-money"><strong>$42,613.30</strong></td>
-                        <td class="budget-money"><strong>$5,327 / mes</strong></td>
-                        <td>
-                            <div class="budget-tags">
-                                <span class="tier-pill beach">Playa perfecta</span>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="budget-footnote">Valores por pareja (incluye vuelos cuando aplica). Ajustable según cotización/paquete.</div>
-
-            <div class="budget-why" aria-label="Justificación de precio">
-                <div class="budget-why-title">Por qué Lopesan y Dreams cuestan más</div>
-                <div class="budget-why-lede">
-                    No es “nombre bonito”: se pagan por estar más cerca de un <strong>resort premium completo</strong> (experiencia + ocio + ubicación).
-                </div>
-                <div class="budget-why-grid">
-                    <div class="budget-why-item">
-                        <strong>Servicio + amenidades premium</strong>
-                        <span>Más restaurantes, bares y extras (spa grande, zonas exclusivas, áreas adult-only).</span>
-                    </div>
-                    <div class="budget-why-item">
-                        <strong>Entretenimiento dentro del resort</strong>
-                        <span>Actividades y ocio incluidos que evitan “salir a buscar plan” cada día.</span>
-                    </div>
-                    <div class="budget-why-item">
-                        <strong>Habitaciones más completas</strong>
-                        <span>Más tipo suite, mejores amenities y menor “sensación masiva” en la experiencia.</span>
-                    </div>
-                    <div class="budget-why-item">
-                        <strong>Ubicación privilegiada</strong>
-                        <span>Playas y zonas más deseadas suelen costar más por noche (la tarifa lo refleja).</span>
-                    </div>
-                    <div class="budget-why-item">
-                        <strong>Posicionamiento (premium / boutique)</strong>
-                        <span>Dreams tiende a ser más “personalizado”; Lopesan más “mega‑resort” premium.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- SECTION 5: HOTELES (CAROUSEL) -->
     <section class="section hotel-carousel-section" id="hotels" data-a1="#FF2BD6" data-a2="#2BE7FF" data-a3="#B7FF2B">
         <div class="hotel-carousel" aria-label="Hoteles">
             <!-- Slide 1 -->
-            <div class="hotel-slide is-active" data-a1="#FF2BD6" data-a2="#FFB020" data-a3="#2BE7FF" data-hotel="lopesan" data-images="assets/img/lopesan/img1.jpg,assets/img/lopesan/img2.jpg,assets/img/lopesan/img3.jpg,assets/img/lopesan/img4.jpg,assets/img/lopesan/img5.jpg,assets/img/lopesan/img6.jpg,assets/img/lopesan/img7.jpg,assets/img/lopesan/img8.jpg,assets/img/lopesan/img9.jpg,assets/img/lopesan/img10.jpg">
+            <div class="hotel-slide is-active" data-a1="#FF2BD6" data-a2="#FFB020" data-a3="#2BE7FF" data-hotel="lopesan" data-budget-total="43323" data-budget-monthly="5415" data-images="assets/img/lopesan/img1.jpg,assets/img/lopesan/img2.jpg,assets/img/lopesan/img3.jpg,assets/img/lopesan/img4.jpg,assets/img/lopesan/img5.jpg,assets/img/lopesan/img6.jpg,assets/img/lopesan/img7.jpg,assets/img/lopesan/img8.jpg,assets/img/lopesan/img9.jpg,assets/img/lopesan/img10.jpg">
         <div class="hotel-text">
             <div class="accent-bar"></div>
             <h1 class="hotel-title">Lopesan Costa Bávaro</h1>
             <p class="hotel-subtitle">El Gigante del Lujo: Cifras y Entretenimiento</p>
+            
+            <div class="hotel-budget-card">
+                <div class="hotel-budget-header">
+                    <span class="hotel-budget-label">💰 Costo Mensual</span>
+                    <span class="hotel-budget-amount">$5,415</span>
+                </div>
+                <div class="hotel-budget-details">
+                    <div class="hotel-budget-detail">
+                        <strong>Por pareja</strong> · 8 meses
+                    </div>
+                    <div class="hotel-budget-detail">
+                        <strong>Arajet AIFA:</strong> 0:44 – 7:23 ida · 6:32 – 9:21 regreso
+                    </div>
+                </div>
+            </div>
             
             <div class="stats-section">
                 <p class="stats-title">📊 Los Números (The Hard Stats)</p>
@@ -2274,11 +2404,26 @@
             </div>
 
             <!-- Slide 2 -->
-            <div class="hotel-slide" data-a1="#2BE7FF" data-a2="#B7FF2B" data-a3="#8A5CFF" data-hotel="onyx" data-images="assets/img/onyx/1120x700-11.jpg,assets/img/onyx/1120x700-12.jpg,assets/img/onyx/1120x700-13.jpg,assets/img/onyx/1120x700-14.jpg,assets/img/onyx/1120x700-15.jpg,assets/img/onyx/1120x700-16.jpg,assets/img/onyx/1120x700-17.jpg,assets/img/onyx/1120x700-18.jpg,assets/img/onyx/1120x700-19.jpg">
+            <div class="hotel-slide" data-a1="#2BE7FF" data-a2="#B7FF2B" data-a3="#8A5CFF" data-hotel="onyx" data-budget-total="39972" data-budget-monthly="4996" data-images="assets/img/onyx/1120x700-11.jpg,assets/img/onyx/1120x700-12.jpg,assets/img/onyx/1120x700-13.jpg,assets/img/onyx/1120x700-14.jpg,assets/img/onyx/1120x700-15.jpg,assets/img/onyx/1120x700-16.jpg,assets/img/onyx/1120x700-17.jpg,assets/img/onyx/1120x700-18.jpg,assets/img/onyx/1120x700-19.jpg">
         <div class="hotel-text">
             <div class="accent-bar"></div>
             <h1 class="hotel-title">Dreams Onyx</h1>
             <p class="hotel-subtitle">El '2 por 1' Perfecto: Lujo Familiar + Fiesta Adulta</p>
+            
+            <div class="hotel-budget-card">
+                <div class="hotel-budget-header">
+                    <span class="hotel-budget-label">💰 Costo Mensual</span>
+                    <span class="hotel-budget-amount">$4,996</span>
+                </div>
+                <div class="hotel-budget-details">
+                    <div class="hotel-budget-detail">
+                        <strong>Por pareja</strong> · 8 meses
+                    </div>
+                    <div class="hotel-budget-detail">
+                        <strong>Arajet AIFA:</strong> 0:44 – 7:23 ida · 6:32 – 9:21 regreso
+                    </div>
+                </div>
+            </div>
             
             <div class="stats-section">
                 <p class="stats-title">📊 Los Números (The Hard Stats)</p>
@@ -2384,11 +2529,29 @@
             </div>
 
             <!-- Slide 3 -->
-            <div class="hotel-slide" data-a1="#2BE7FF" data-a2="#FF2BD6" data-a3="#FFB020" data-hotel="barcelo" data-images="assets/img/barcelo/17740244.jpg,assets/img/barcelo/17798123.jpg,assets/img/barcelo/17798201.jpg,assets/img/barcelo/17798827.jpg,assets/img/barcelo/17799173.jpg,assets/img/barcelo/464361736.jpg">
+            <div class="hotel-slide" data-a1="#2BE7FF" data-a2="#FF2BD6" data-a3="#FFB020" data-hotel="barcelo" data-budget-total="42613" data-budget-monthly="5327" data-images="assets/img/barcelo/17740244.jpg,assets/img/barcelo/17798123.jpg,assets/img/barcelo/17798201.jpg,assets/img/barcelo/17798827.jpg,assets/img/barcelo/17799173.jpg,assets/img/barcelo/464361736.jpg">
         <div class="hotel-text">
             <div class="accent-bar"></div>
             <h1 class="hotel-title">Barceló Bávaro Palace</h1>
-            <p class="hotel-subtitle">Opción sólida (playa + actividades) · pero no es “mega‑resort premium”</p>
+            <p class="hotel-subtitle">Opción sólida (playa + actividades) · pero no es "mega‑resort premium"</p>
+            
+            <div class="hotel-budget-card">
+                <div class="hotel-budget-header">
+                    <span class="hotel-budget-label">💰 Costo Mensual</span>
+                    <span class="hotel-budget-amount">$5,327</span>
+                </div>
+                <div class="hotel-budget-details">
+                    <div class="hotel-budget-detail">
+                        <strong>Por pareja</strong> · 8 meses
+                    </div>
+                    <div class="hotel-budget-detail">
+                        <strong>Incluye vuelos:</strong> + $11,333.30 (Arajet AIFA)
+                    </div>
+                    <div class="hotel-budget-detail">
+                        <strong>Horarios:</strong> 0:44 – 7:23 ida · 6:32 – 9:21 regreso
+                    </div>
+                </div>
+            </div>
             
             <div class="stats-section">
                 <p class="stats-title">✅ Lo que sí ofrece</p>
@@ -2470,18 +2633,36 @@
             </div>
 
             <!-- Slide 4 -->
-            <div class="hotel-slide" data-a1="#B7FF2B" data-a2="#2BE7FF" data-a3="#FF2BD6" data-hotel="serenade" data-images="assets/img/serenade/1120x629.jpg,assets/img/serenade/1120x629-1.jpg,assets/img/serenade/1120x629-2.jpg,assets/img/serenade/1120x629-3.jpg,assets/img/serenade/1120x629-4.jpg">
+            <div class="hotel-slide" data-a1="#B7FF2B" data-a2="#2BE7FF" data-a3="#FF2BD6" data-hotel="serenade" data-budget-total="36359" data-budget-monthly="4545" data-images="assets/img/serenade/1120x629.jpg,assets/img/serenade/1120x629-1.jpg,assets/img/serenade/1120x629-2.jpg,assets/img/serenade/1120x629-3.jpg,assets/img/serenade/1120x629-4.jpg">
         <div class="hotel-text">
             <div class="accent-bar"></div>
             <h1 class="hotel-title">Serenade Punta Cana</h1>
             <p class="hotel-subtitle">Elegante + frente a playa · mejor valor si priorizas ahorro</p>
+            
+            <div class="hotel-budget-card">
+                <div class="hotel-budget-header">
+                    <span class="hotel-budget-label">💰 Costo Mensual</span>
+                    <span class="hotel-budget-amount">$4,545</span>
+                </div>
+                <div class="hotel-budget-details">
+                    <div class="hotel-budget-detail">
+                        <strong>Por pareja</strong> · 8 meses
+                    </div>
+                    <div class="hotel-budget-detail">
+                        <strong>Incluye vuelos:</strong> + $11,333.30 (Arajet AIFA)
+                    </div>
+                    <div class="hotel-budget-detail">
+                        <strong>Horarios:</strong> 0:44 – 7:23 ida · 6:32 – 9:21 regreso
+                    </div>
+                </div>
+            </div>
             
             <div class="stats-section">
                 <p class="stats-title">✅ Lo que sí ofrece</p>
                 <div style="font-size: 12px; line-height: 1.65; color: var(--text-1);">
                     <div style="margin-bottom: 10px;">🌿 <strong>Ambiente elegante</strong> y buena ubicación frente a playa.</div>
                     <div style="margin-bottom: 10px;">🧖‍♀️ <strong>Relax real</strong>: spa y vibe más tranquilo para descansar.</div>
-                    <div>💸 <strong>Value</strong>: excelente si quieres “Caribe bien” cuidando el presupuesto.</div>
+                    <div>💸 <strong>Value</strong>: excelente si quieres "Caribe bien" cuidando el presupuesto.</div>
                 </div>
             </div>
 
@@ -2558,18 +2739,36 @@
             </div>
 
             <!-- Slide 5 -->
-            <div class="hotel-slide" data-a1="#8A5CFF" data-a2="#B7FF2B" data-a3="#2BE7FF" data-hotel="iberostar" data-images="assets/img/Iberostar/727603082.jpg,assets/img/Iberostar/68761517.jpg,assets/img/Iberostar/727603915.jpg,assets/img/Iberostar/68761776.jpg,assets/img/Iberostar/769176136.jpg">
+            <div class="hotel-slide" data-a1="#8A5CFF" data-a2="#B7FF2B" data-a3="#2BE7FF" data-hotel="iberostar" data-budget-total="38973" data-budget-monthly="4872" data-images="assets/img/Iberostar/727603082.jpg,assets/img/Iberostar/68761517.jpg,assets/img/Iberostar/727603915.jpg,assets/img/Iberostar/68761776.jpg,assets/img/Iberostar/769176136.jpg">
         <div class="hotel-text">
             <div class="accent-bar"></div>
             <h1 class="hotel-title">Iberostar Waves Dominicana</h1>
             <p class="hotel-subtitle">Familiar + actividades · enfoque naturaleza y club infantil</p>
+            
+            <div class="hotel-budget-card">
+                <div class="hotel-budget-header">
+                    <span class="hotel-budget-label">💰 Costo Mensual</span>
+                    <span class="hotel-budget-amount">$4,872</span>
+                </div>
+                <div class="hotel-budget-details">
+                    <div class="hotel-budget-detail">
+                        <strong>Por pareja</strong> · 8 meses
+                    </div>
+                    <div class="hotel-budget-detail">
+                        <strong>Incluye vuelos:</strong> + $11,333.30 (Arajet AIFA)
+                    </div>
+                    <div class="hotel-budget-detail">
+                        <strong>Horarios:</strong> 0:44 – 7:23 ida · 6:32 – 9:21 regreso
+                    </div>
+                </div>
+            </div>
             
             <div class="stats-section">
                 <p class="stats-title">✅ Lo que sí ofrece</p>
                 <div style="font-size: 12px; line-height: 1.65; color: var(--text-1);">
                     <div style="margin-bottom: 10px;">🏌️‍♂️ <strong>Golf + spa</strong> y actividades para todas las edades.</div>
                     <div style="margin-bottom: 10px;">👶 <strong>Enfoque familiar</strong> con programas infantiles y ambiente verde.</div>
-                    <div>🌿 <strong>Naturaleza</strong>: jardines y vibe más “tropical”/tranquilo.</div>
+                    <div>🌿 <strong>Naturaleza</strong>: jardines y vibe más "tropical"/tranquilo.</div>
                 </div>
             </div>
 
@@ -2654,6 +2853,94 @@
         </div>
     </section>
 
+    <!-- SECTION 4.5: BUDGET -->
+    <section class="section budget-section" id="budget" data-a1="#2BE7FF" data-a2="#B7FF2B" data-a3="#FF2BD6">
+        <div class="budget-wrap">
+            <h1 class="section-title">Budget Check</h1>
+            <p class="section-subtitle">Costos finales por pareja (hotel + vuelos) y el "por qué" de cada opción</p>
+
+            <table class="budget-table" aria-label="Costos por hotel">
+                <thead>
+                    <tr>
+                        <th>Hotel</th>
+                        <th>Costo base (pareja)</th>
+                        <th>Vuelos</th>
+                        <th>Costo final (pareja)</th>
+                        <th>Pago en 8 meses</th>
+                        <th>Tags</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="budget-row is-premium" data-monthly="5415">
+                        <td class="budget-hotel">Lopesan Costa Bávaro Resort Spa &amp; Casino</td>
+                        <td class="budget-money">$43,323</td>
+                        <td class="budget-money">Arajet AIFA<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
+                        <td class="budget-money"><strong>$43,323</strong></td>
+                        <td class="budget-money"><strong>$5,415 / mes</strong></td>
+                        <td>
+                            <div class="budget-tags">
+                                <span class="tier-pill best">Best option</span>
+                                <span class="tier-pill wow">Factor "WOW"</span>
+                                <span class="tier-pill premium">🏆 Premium</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="budget-row is-premium" data-monthly="4996">
+                        <td class="budget-hotel">Dreams Onyx Resort &amp; Spa All Inclusive</td>
+                        <td class="budget-money">$39,972</td>
+                        <td class="budget-money">Arajet AIFA<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
+                        <td class="budget-money"><strong>$39,972</strong></td>
+                        <td class="budget-money"><strong>$4,996 / mes</strong></td>
+                        <td>
+                            <div class="budget-tags">
+                                <span class="tier-pill party">Fiesta + Lujo</span>
+                                <span class="tier-pill premium">✨ Premium</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="budget-row" data-monthly="4545">
+                        <td class="budget-hotel">Serenade Punta Cana Beach &amp; Spa Resort</td>
+                        <td class="budget-money">$25,026</td>
+                        <td class="budget-money">+ $11,333.30 (Arajet AIFA)<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
+                        <td class="budget-money"><strong>$36,359.30</strong></td>
+                        <td class="budget-money"><strong>$4,545 / mes</strong></td>
+                        <td>
+                            <div class="budget-tags">
+                                <span class="tier-pill save">Ahorro inteligente</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="budget-row" data-monthly="4872">
+                        <td class="budget-hotel">Iberostar Waves Dominicana</td>
+                        <td class="budget-money">$27,640</td>
+                        <td class="budget-money">+ $11,333.30 (Arajet AIFA)<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
+                        <td class="budget-money"><strong>$38,973.30</strong></td>
+                        <td class="budget-money"><strong>$4,872 / mes</strong></td>
+                        <td>
+                            <div class="budget-tags">
+                                <span class="tier-pill family">Naturaleza + Niños</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="budget-row" data-monthly="5327">
+                        <td class="budget-hotel">Barceló Bávaro Palace</td>
+                        <td class="budget-money">$31,280</td>
+                        <td class="budget-money">+ $11,333.30 (Arajet AIFA)<br><span style="font-size: 11px; color: var(--muted);">0:44 – 7:23 ida<br>6:32 – 9:21 regreso</span></td>
+                        <td class="budget-money"><strong>$42,613.30</strong></td>
+                        <td class="budget-money"><strong>$5,327 / mes</strong></td>
+                        <td>
+                            <div class="budget-tags">
+                                <span class="tier-pill beach">Playa perfecta</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="budget-footnote">Valores por pareja (incluye vuelos cuando aplica). Ajustable según cotización/paquete.</div>
+        </div>
+    </section>
+
     <!-- SECTION 10: COMPARISON TABLE -->
     <section class="section comparison-table-section" id="comparison" data-a1="#2BE7FF" data-a2="#8A5CFF" data-a3="#FF2BD6">
         <h1 class="section-title">Comparativa de Terrenos</h1>
@@ -2662,10 +2949,12 @@
         <table class="comparison-table-large">
             <thead>
                 <tr>
-                    <th style="background-color: transparent; color: var(--text-0);">Categoría</th>
+                    <th>Categoría</th>
                     <th>Lopesan Costa Bávaro</th>
                     <th>Dreams Onyx</th>
-                    <th>Otros Destacados</th>
+                    <th>Serenade Punta Cana</th>
+                    <th>Iberostar Waves</th>
+                    <th>Barceló Bávaro</th>
                 </tr>
             </thead>
             <tbody>
@@ -2673,25 +2962,100 @@
                     <td class="category-cell">Gastronomía</td>
                     <td><span class="highlight-text">7 restaurantes</span> a la carta. Política de <span class="highlight-text">sin reserva</span> en la mayoría. Estética visual impecable.</td>
                     <td><span class="highlight-text">17 opciones</span> totales (incluye Breathless). Política <span class="highlight-text">NUNCA reservas</span>.</td>
-                    <td>Barceló: 11 opciones con reserva estricta. Iberostar: 6 temáticos.</td>
+                    <td>Opciones gastronómicas variadas con buena calidad.</td>
+                    <td>6 restaurantes temáticos con buena comida.</td>
+                    <td>11 opciones con reserva estricta.</td>
                 </tr>
                 <tr>
                     <td class="category-cell">Bebidas</td>
                     <td>Marcas internacionales estándar y algunas premium. Calidad consistente.</td>
                     <td><span class="highlight-text">Top Premium</span> incluido (Don Julio, Grey Goose). Mixología superior.</td>
-                    <td>Calidad estándar en Serenade e Iberostar.</td>
+                    <td>Calidad estándar.</td>
+                    <td>Calidad estándar.</td>
+                    <td>Calidad estándar.</td>
                 </tr>
                 <tr>
                     <td class="category-cell">Para Niños</td>
                     <td><span class="highlight-text">Splash Island</span> y Miniclub Panchi World. Diseño moderno y seguro.</td>
                     <td><span class="highlight-text">Jungle Waterpark</span> con toboganes rápidos y Río Lento.</td>
-                    <td>Iberostar: <span class="highlight-text">Star Camp</span> (El mejor club de niños).</td>
+                    <td>Actividades familiares disponibles.</td>
+                    <td><span class="highlight-text">Star Camp</span> (El mejor club de niños).</td>
+                    <td>Actividades para niños incluidas.</td>
                 </tr>
                 <tr>
                     <td class="category-cell">La Playa</td>
                     <td>Muy buena, amplia, ubicada en la zona de Bávaro. Oleaje moderado.</td>
                     <td>Arena dorada, mar un poco más picado (zona Atlántico).</td>
-                    <td>Barceló: <span class="highlight-text">La mejor playa (10/10)</span>. Agua turquesa sin olas.</td>
+                    <td>Buena playa frente al hotel.</td>
+                    <td>Playa familiar y tranquila.</td>
+                    <td><span class="highlight-text">La mejor playa (10/10)</span>. Agua turquesa sin olas.</td>
+                </tr>
+                <tr>
+                    <td class="category-cell">Características & Servicios Clave</td>
+                    <td>Resort gigante, The Boulevard (casino, bolera, teatro, discoteca), spa grande, zonas Adults Only y Unique Club, muchos restaurantes y bares.</td>
+                    <td>Resort moderno, lazy river, parque acuático, muchos restaurantes, acceso a Breathless, spa completo.</td>
+                    <td>Resort elegante y más compacto, buena playa, spa, ambiente tranquilo.</td>
+                    <td>Resort clásico, enfoque familiar, actividades diarias, buena comida, acceso a servicios Iberostar.</td>
+                    <td>Resort grande, instalaciones amplias, spa, deportes acuáticos, shows.</td>
+                </tr>
+                <tr>
+                    <td class="category-cell">Beneficios Principales</td>
+                    <td>Todo está dentro del hotel, no necesitas salir; entretenimiento constante día y noche; experiencia premium.</td>
+                    <td>Excelente balance entre descanso y diversión; ideal para familias y parejas.</td>
+                    <td>Precio competitivo con buena calidad; menos masivo; descanso real.</td>
+                    <td>Confiable, buen servicio, ideal para familias tradicionales.</td>
+                    <td>Muchas actividades incluidas; experiencia sólida sin ser ultra premium.</td>
+                </tr>
+                <tr>
+                    <td class="category-cell">Atracciones / Experiencia</td>
+                    <td>Casino, shows nocturnos, beach club, spa de gran tamaño, múltiples piscinas.</td>
+                    <td>Parque acuático, shows nocturnos, piscinas grandes, actividades acuáticas.</td>
+                    <td>Playa tranquila, spa, bares relajados.</td>
+                    <td>Shows, actividades deportivas, piscinas familiares.</td>
+                    <td>Deportes acuáticos, casino pequeño, espectáculos nocturnos.</td>
+                </tr>
+                <tr>
+                    <td class="category-cell">TAGs (En qué destaca)</td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+                            <span class="tier-pill premium">Premium</span>
+                            <span class="tier-pill best">Todo-en-un-lugar</span>
+                            <span class="tier-pill wow">Mejor entretenimiento</span>
+                            <span class="tier-pill party">Casino</span>
+                            <span class="tier-pill family">Adultos y familias</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+                            <span class="tier-pill best">Mejor balance</span>
+                            <span class="tier-pill family">Familias</span>
+                            <span class="tier-pill wow">Parque acuático</span>
+                            <span class="tier-pill party">Diversión</span>
+                            <span class="tier-pill premium">Todo incluido completo</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+                            <span class="tier-pill save">Mejor precio-calidad</span>
+                            <span class="tier-pill best">Relajación</span>
+                            <span class="tier-pill wow">Menos masivo</span>
+                            <span class="tier-pill party">Parejas</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+                            <span class="tier-pill family">Familias</span>
+                            <span class="tier-pill best">Marca confiable</span>
+                            <span class="tier-pill premium">Todo incluido tradicional</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+                            <span class="tier-pill beach">Resort grande</span>
+                            <span class="tier-pill wow">Muchas actividades</span>
+                            <span class="tier-pill best">Equilibrado</span>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -3309,17 +3673,6 @@
                 }
             });
 
-            gsap.from('#budget .budget-why > *', {
-                y: 14,
-                autoAlpha: 0,
-                duration: 0.65,
-                ease: 'power2.out',
-                stagger: 0.08,
-                scrollTrigger: {
-                    trigger: '#budget .budget-why',
-                    start: 'top 82%'
-                }
-            });
         }
 
         // ========== HOTELS CAROUSEL (Pinned + Transitions) ==========
