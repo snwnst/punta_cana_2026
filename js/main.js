@@ -486,33 +486,1078 @@ ScrollTrigger.create({
     onLeaveBack: stopOptionsGalleries
 });
 
-// ========== BUDGET SECTION (visual clarity) ==========
+// ========== BUDGET SECTION (Enhanced Animations) ==========
 const budgetRows = gsap.utils.toArray('#budget .budget-row');
+const budgetTable = document.querySelector('#budget .budget-table');
+const budgetTableHead = document.querySelector('#budget .budget-table thead');
+const budgetFootnote = document.querySelector('#budget .budget-footnote');
+
 if (budgetRows.length) {
-    gsap.from('#budget .section-title, #budget .section-subtitle', {
-        y: 18,
-        autoAlpha: 0,
-        duration: 0.7,
-        ease: 'power2.out',
-        stagger: 0.08,
+    // Ensure all elements are visible initially (fallback if ScrollTrigger doesn't fire)
+    gsap.set('#budget .section-title, #budget .section-subtitle', { 
+        autoAlpha: 1,
+        opacity: 1,
+        visibility: 'visible'
+    });
+    
+    if (budgetTableHead) {
+        gsap.set(budgetTableHead, { 
+            autoAlpha: 1,
+            opacity: 1,
+            visibility: 'visible',
+            x: 0
+        });
+    }
+    
+    gsap.set('#budget .budget-table tbody tr', { 
+        autoAlpha: 1,
+        opacity: 1,
+        visibility: 'visible',
+        y: 0,
+        scale: 1
+    });
+    
+    if (budgetFootnote) {
+        gsap.set(budgetFootnote, { 
+            autoAlpha: 1,
+            opacity: 1,
+            visibility: 'visible',
+            y: 0
+        });
+    }
+
+    // Create master timeline for Budget section
+    const budgetTL = gsap.timeline({
         scrollTrigger: {
             trigger: '#budget',
+            start: 'top 80%',
+            once: true
+        }
+    });
+
+    // 1. Title and subtitle with enhanced entrance
+    budgetTL.from('#budget .section-title', {
+        y: 30,
+        autoAlpha: 0,
+        scale: 0.95,
+        duration: 0.9,
+        ease: 'power3.out'
+    })
+    .from('#budget .section-subtitle', {
+        y: 20,
+        autoAlpha: 0,
+        duration: 0.7,
+        ease: 'power2.out'
+    }, '-=0.4');
+
+    // 2. Table header with slide-in effect
+    if (budgetTableHead) {
+        budgetTL.from(budgetTableHead, {
+            x: -30,
+        autoAlpha: 0,
+        duration: 0.6,
+            ease: 'power2.out'
+        }, '-=0.2');
+    }
+
+    // 3. Table rows with enhanced stagger and scale effect
+    budgetTL.from('#budget .budget-table tbody tr', {
+        y: 20,
+        autoAlpha: 0,
+        scale: 0.98,
+        duration: 0.65,
+        ease: 'back.out(1.1)',
+        stagger: {
+            amount: 0.4,
+            from: 'start'
+        }
+    }, '-=0.3');
+
+    // 4. Highlight premium rows with a subtle glow effect
+    const premiumRows = gsap.utils.toArray('#budget .budget-row.is-premium');
+    if (premiumRows.length) {
+        budgetTL.to(premiumRows, {
+            boxShadow: '0 0 20px rgba(255, 43, 214, 0.3)',
+        duration: 0.8,
+            ease: 'power2.inOut',
+            stagger: 0.1
+        }, '-=0.2');
+    }
+
+    // 5. Footnote fade in
+    if (budgetFootnote) {
+        budgetTL.from(budgetFootnote, {
+            y: 10,
+            autoAlpha: 0,
+            duration: 0.5,
+            ease: 'power2.out'
+        }, '-=0.1');
+    }
+}
+
+// ========== QUICK DECISION GUIDE (Enhanced Animations) ==========
+const decisionCards = gsap.utils.toArray('.decision-card');
+const quickDecisionGuide = document.querySelector('.quick-decision-guide');
+
+if (decisionCards.length && quickDecisionGuide) {
+    // Ensure all cards are visible initially
+    gsap.set('.decision-card', { 
+        autoAlpha: 1, 
+        opacity: 1, 
+        visibility: 'visible',
+        y: 0,
+        scale: 1,
+        rotation: 0
+    });
+    
+    // Create timeline for Quick Decision Guide
+    const decisionTL = gsap.timeline({
+        scrollTrigger: {
+            trigger: quickDecisionGuide,
+            start: 'top 75%',
+            once: true
+        }
+    });
+
+    // 1. Title with enhanced entrance
+    decisionTL.from('.quick-decision-title', {
+        y: 35,
+            autoAlpha: 0,
+        scale: 0.92,
+        rotationX: -15,
+        duration: 1,
+        ease: 'power3.out',
+        transformOrigin: 'center bottom'
+    });
+
+    // 2. Cards with sophisticated entrance animation
+    decisionCards.forEach((card, index) => {
+        const isFirst = index === 0; // Lopesan card gets special treatment
+        
+        decisionTL.fromTo(card, 
+            {
+                y: 50,
+                autoAlpha: 0,
+                scale: 0.85,
+                rotationY: -10,
+                opacity: 0,
+                filter: 'blur(8px)'
+            },
+            {
+                y: 0,
+                autoAlpha: 1,
+                opacity: 1,
+                scale: 1,
+                rotationY: 0,
+                filter: 'blur(0px)',
+                duration: isFirst ? 0.9 : 0.75,
+                delay: index * 0.08,
+                ease: isFirst ? 'back.out(1.4)' : 'back.out(1.2)',
+                transformOrigin: 'center center',
+                onComplete: () => {
+                    // Ensure visibility
+                    gsap.set(card, { autoAlpha: 1, opacity: 1, visibility: 'visible' });
+                }
+            },
+            isFirst ? '-=0.3' : '-=0.2'
+        );
+
+        // Add subtle glow pulse to first card (Lopesan)
+        if (isFirst) {
+            decisionTL.to(card, {
+                boxShadow: '0 0 30px rgba(255, 43, 214, 0.4)',
+            duration: 0.6,
+                ease: 'power2.inOut',
+                yoyo: true,
+                repeat: 1
+            }, '-=0.4');
+        }
+    });
+    
+    // Enhanced interactive hover effects with GSAP
+    decisionCards.forEach((card, index) => {
+        const isFirst = index === 0; // Lopesan card
+        
+        card.addEventListener('mouseenter', () => {
+            gsap.to(card, {
+                scale: isFirst ? 1.05 : 1.03,
+                y: -6,
+                rotationY: isFirst ? 2 : 1,
+                boxShadow: isFirst 
+                    ? '0 12px 40px rgba(255, 43, 214, 0.4), 0 0 60px rgba(255, 43, 214, 0.2)' 
+                    : '0 10px 30px rgba(43, 231, 255, 0.3)',
+                duration: 0.4,
+                ease: 'power2.out'
+            });
+            
+            // Animate emoji
+            const emoji = card.querySelector('.decision-emoji');
+            if (emoji) {
+                gsap.to(emoji, {
+                    scale: 1.2,
+                    rotation: isFirst ? 10 : 5,
+                    duration: 0.4,
+                    ease: 'back.out(1.5)'
+                });
+            }
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            gsap.to(card, {
+                scale: 1,
+                y: 0,
+                rotationY: 0,
+                boxShadow: '0 10px 40px rgba(0, 0, 0, 0.45)',
+                duration: 0.35,
+                ease: 'power2.out'
+            });
+            
+            // Reset emoji
+            const emoji = card.querySelector('.decision-emoji');
+            if (emoji) {
+                gsap.to(emoji, {
+                    scale: 1,
+                    rotation: 0,
+                    duration: 0.35,
+                    ease: 'power2.out'
+                });
+            }
+        });
+    });
+}
+
+// ========== PERFORMANCE CURVE - DYNAMIC DATA VISUALIZATION ==========
+function initPerformanceCurve() {
+    const curveSvg = document.querySelector('.curve-svg');
+    const curveChart = document.querySelector('#performanceCurveChart');
+
+    if (!curveSvg || !curveChart) {
+        console.warn('Performance curve elements not found, retrying...');
+        // Retry after a short delay
+        setTimeout(initPerformanceCurve, 100);
+        return;
+    }
+
+    // Continue with initialization
+    (function(curveSvg, curveChart) {
+    // Resort data with real prices and scores
+    const resortsData = [
+        { 
+            name: 'Serenade Punta Cana', 
+            price: 37539, 
+            score: 78, 
+            stars: 5,
+            color: '#2BE7FF',
+            hotel: 'serenade',
+            monthly: 1390
+        },
+        { 
+            name: 'Iberostar Waves Dominicana', 
+            price: 41460, 
+            score: 74, 
+            stars: 4,
+            color: '#B7FF2B',
+            hotel: 'iberostar',
+            monthly: 1536
+        },
+        { 
+            name: 'Barceló Bávaro Palace', 
+            price: 46920, 
+            score: 86, 
+            stars: 5,
+            color: '#FFB020',
+            hotel: 'barcelo',
+            monthly: 1738
+        },
+        { 
+            name: 'Dreams Onyx', 
+            price: 102798, 
+            score: 92, 
+            stars: 5,
+            color: '#8A5CFF',
+            hotel: 'onyx',
+            monthly: 3807
+        },
+        { 
+            name: 'Lopesan Costa Bávaro', 
+            price: 116585, 
+            score: 100, 
+            stars: 5,
+            color: '#FF2BD6',
+            hotel: 'lopesan',
+            monthly: 4318,
+            isSweetSpot: true
+        },
+        { 
+            name: 'Nickelodeon Hotels & Resorts Punta Cana', 
+            price: 155000, 
+            score: 103, 
+            stars: 5,
+            color: '#FF6B9D',
+            hotel: 'nickelodeon',
+            monthly: 5741,
+            isUltraLuxury: true
+        },
+        { 
+            name: 'Hard Rock Hotel & Casino Punta Cana', 
+            price: 165000, 
+            score: 104, 
+            stars: 5,
+            color: '#FF8C42',
+            hotel: 'hardrock',
+            monthly: 6111,
+            isUltraLuxury: true
+        },
+        { 
+            name: 'W Punta Cana (Adult All-Inclusive)', 
+            price: 180000, 
+            score: 108, 
+            stars: 5,
+            color: '#C084FC',
+            hotel: 'wpunta',
+            monthly: 6667,
+            isUltraLuxury: true
+        },
+        { 
+            name: 'Eden Roc Cap Cana (Ultra Luxury)', 
+            price: 280000, 
+            score: 112, 
+            stars: 5,
+            color: '#FF6B9D',
+            hotel: 'edenroc',
+            monthly: 10370,
+            isUltraLuxury: true
+        }
+    ];
+
+    // Calculate value index (score/price ratio)
+    resortsData.forEach(resort => {
+        resort.valueIndex = (resort.score / resort.price) * 10000; // Scale for readability
+    });
+
+    // Sort data by price (ascending) - required for scatter plot
+    resortsData.sort((a, b) => a.price - b.price);
+
+    // SVG dimensions - more compact to fit in viewport
+    const svgWidth = 900;
+    const svgHeight = 400;
+    const padding = { top: 50, right: 70, bottom: 60, left: 70 };
+    const chartWidth = svgWidth - padding.left - padding.right;
+    const chartHeight = svgHeight - padding.top - padding.bottom;
+
+    // Calculate scales
+    const minPrice = Math.min(...resortsData.map(r => r.price));
+    const maxPrice = Math.max(...resortsData.map(r => r.price));
+    const minScore = Math.min(...resortsData.map(r => r.score));
+    const maxScore = Math.max(...resortsData.map(r => r.score));
+    const minStars = Math.min(...resortsData.map(r => r.stars));
+    const maxStars = Math.max(...resortsData.map(r => r.stars));
+    
+    // Calculate circle radius based on price, score, and stars
+    // Formula: weighted combination of normalized values
+    function calculateCircleRadius(resort) {
+        // Normalize values to 0-1 range
+        const normalizedPrice = (resort.price - minPrice) / (maxPrice - minPrice);
+        const normalizedScore = (resort.score - minScore) / (maxScore - minScore);
+        const normalizedStars = (resort.stars - minStars) / (maxStars - minStars);
+        
+        // Weighted combination (score and stars more important than price)
+        // Higher score/stars = larger circle, but price also contributes
+        const combinedValue = (normalizedScore * 0.5) + (normalizedStars * 0.3) + (normalizedPrice * 0.2);
+        
+        // Scale to radius range: 6px (min) to 18px (max)
+        const minRadius = 6;
+        const maxRadius = 18;
+        const radius = minRadius + (combinedValue * (maxRadius - minRadius));
+        
+        // Sweet Spot gets a slight boost for visibility
+        if (resort.isSweetSpot) {
+            return Math.max(radius, 14); // Minimum 14px for Sweet Spot
+        }
+        
+        return radius;
+    }
+
+    const priceScale = (price) => {
+        return padding.left + ((price - minPrice) / (maxPrice - minPrice)) * chartWidth;
+    };
+
+    const scoreScale = (score) => {
+        return padding.top + chartHeight - ((score - minScore) / (maxScore - minScore)) * chartHeight;
+    };
+
+    // Use already sorted data (resortsData is already sorted by price)
+    const sortedResorts = [...resortsData];
+
+    // Generate smoothed curve using Catmull-Rom spline interpolation
+    // This curve shows diminishing returns - flattens after Lopesan (Sweet Spot)
+    function generateSmoothedCurve() {
+        if (sortedResorts.length < 2) {
+            return '';
+        }
+
+        // Convert to SVG coordinates
+        const points = sortedResorts.map(resort => ({
+            x: priceScale(resort.price),
+            y: scoreScale(resort.score),
+            price: resort.price,
+            score: resort.score,
+            isSweetSpot: resort.isSweetSpot
+        }));
+
+        // Find Lopesan index (Sweet Spot)
+        const sweetSpotIndex = points.findIndex(p => p.isSweetSpot);
+        
+        // Generate smooth curve using Catmull-Rom spline
+        const smoothPoints = [];
+        const numPoints = 300; // High resolution for smooth curve
+        
+        // Helper function for Catmull-Rom interpolation
+        function catmullRom(p0, p1, p2, p3, t) {
+            const t2 = t * t;
+            const t3 = t2 * t;
+            return {
+                x: 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+                y: 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)
+            };
+        }
+        
+        // Generate points for each segment
+        for (let i = 0; i < points.length - 1; i++) {
+            const p0 = i > 0 ? points[i - 1] : points[i];
+            const p1 = points[i];
+            const p2 = points[i + 1];
+            const p3 = i < points.length - 2 ? points[i + 2] : points[i + 1];
+            
+            const segmentPoints = Math.ceil(numPoints / (points.length - 1));
+            
+            for (let j = 0; j <= segmentPoints; j++) {
+                let t = j / segmentPoints;
+                
+                // Apply diminishing returns effect after Sweet Spot
+                if (i >= sweetSpotIndex && sweetSpotIndex >= 0) {
+                    // After Sweet Spot: apply strong easing to flatten curve
+                    // This creates the visual effect of diminishing returns
+                    t = 1 - Math.pow(1 - t, 2.5); // Stronger easing for more flattening
+                } else if (i < sweetSpotIndex && sweetSpotIndex >= 0) {
+                    // Before Sweet Spot: slight ease-in for steeper growth
+                    t = Math.pow(t, 0.8);
+                }
+                
+                const point = catmullRom(p0, p1, p2, p3, t);
+                
+                // Additional flattening after Sweet Spot for Y values
+                if (i >= sweetSpotIndex && sweetSpotIndex >= 0) {
+                    // Reduce the score increase rate (diminishing returns)
+                    const expectedY = p1.y + (p2.y - p1.y) * t;
+                    const diminishingFactor = 0.3 + 0.7 * (1 - Math.pow(t, 1.5)); // Stronger flattening
+                    point.y = p1.y + (expectedY - p1.y) * diminishingFactor;
+                }
+                
+                smoothPoints.push(point);
+            }
+        }
+        
+        // Add the last point
+        smoothPoints.push(points[points.length - 1]);
+
+        // Build SVG path using smooth curve with cubic bezier
+        if (smoothPoints.length < 2) return '';
+        
+        let path = `M ${smoothPoints[0].x.toFixed(2)} ${smoothPoints[0].y.toFixed(2)}`;
+        
+        // Use cubic bezier for smoother transitions
+        for (let i = 1; i < smoothPoints.length - 1; i++) {
+            const prev = smoothPoints[i - 1];
+            const curr = smoothPoints[i];
+            const next = smoothPoints[i + 1];
+            
+            // Calculate control points for smooth bezier curve
+            const cp1x = prev.x + (curr.x - prev.x) * 0.3;
+            const cp1y = prev.y + (curr.y - prev.y) * 0.3;
+            const cp2x = curr.x - (next.x - curr.x) * 0.3;
+            const cp2y = curr.y - (next.y - curr.y) * 0.3;
+            
+            path += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${curr.x.toFixed(2)} ${curr.y.toFixed(2)}`;
+        }
+        
+        // Add final point
+        const lastPoint = smoothPoints[smoothPoints.length - 1];
+        path += ` L ${lastPoint.x.toFixed(2)} ${lastPoint.y.toFixed(2)}`;
+        
+        return path;
+    }
+
+    // Draw zones - minimal for clean scatter plot (optional, very subtle)
+    function drawZones() {
+        const zonesGroup = curveSvg.querySelector('#zones');
+        if (!zonesGroup) return;
+
+        // Find Lopesan position to define zones dynamically
+        const lopesanIndex = sortedResorts.findIndex(r => r.isSweetSpot);
+        let sweetSpotX = padding.left + chartWidth * 0.4; // Default
+        
+        if (lopesanIndex >= 0) {
+            const lopesan = sortedResorts[lopesanIndex];
+            sweetSpotX = priceScale(lopesan.price);
+        }
+        
+        const valueZoneWidth = sweetSpotX - padding.left;
+        const diminishingZoneX = sweetSpotX;
+        const diminishingZoneWidth = chartWidth - valueZoneWidth;
+        
+        // Zones with improved labels
+        zonesGroup.innerHTML = `
+            <!-- Value Zone - very subtle -->
+            <rect x="${padding.left}" y="${padding.top}" width="${valueZoneWidth}" height="${chartHeight}" 
+                  fill="url(#valueZone)" opacity="0.08"/>
+            
+            <!-- Value Zone Label -->
+            <text x="${padding.left + valueZoneWidth / 2}" y="${padding.top + 20}" 
+                  text-anchor="middle" fill="rgba(43, 231, 255, 0.6)" font-size="10" font-weight="700" letter-spacing="0.05em">
+                  🟢 VALUE ZONE
+            </text>
+            
+            <!-- Diminishing Returns Zone - very subtle -->
+            <rect x="${diminishingZoneX}" y="${padding.top}" width="${diminishingZoneWidth}" height="${chartHeight}" 
+                  fill="url(#diminishingZone)" opacity="0.08"/>
+            
+            <!-- Diminishing Returns Zone Label -->
+            <text x="${diminishingZoneX + diminishingZoneWidth / 2}" y="${padding.top + 20}" 
+                  text-anchor="middle" fill="rgba(255, 43, 214, 0.6)" font-size="10" font-weight="700" letter-spacing="0.05em">
+                  🔴 DIMINISHING RETURNS
+            </text>
+            
+            <!-- Sweet Spot divider line -->
+            <line x1="${sweetSpotX}" y1="${padding.top}" x2="${sweetSpotX}" y2="${padding.top + chartHeight}" 
+                  stroke="rgba(255, 43, 214, 0.3)" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5"/>
+        `;
+    }
+
+    // Draw data points and labels
+    function drawDataPoints() {
+        const dataPointsGroup = curveSvg.querySelector('#dataPoints');
+        const labelsGroup = curveSvg.querySelector('#labels');
+        const sweetSpotGroup = curveSvg.querySelector('#sweetSpotHighlight');
+        
+        if (!dataPointsGroup || !labelsGroup || !sweetSpotGroup) return;
+
+        dataPointsGroup.innerHTML = '';
+        labelsGroup.innerHTML = '';
+        sweetSpotGroup.innerHTML = '';
+
+        sortedResorts.forEach((resort) => {
+            const x = priceScale(resort.price);
+            const y = scoreScale(resort.score);
+            const isSweetSpot = resort.isSweetSpot;
+
+            // Sweet spot highlight - prominent visual emphasis
+            if (isSweetSpot) {
+                sweetSpotGroup.innerHTML = `
+                    <!-- Multiple glow rings for dramatic effect -->
+                    <circle cx="${x}" cy="${y}" r="50" fill="none" stroke="${resort.color}" stroke-width="1.5" opacity="0.2" stroke-dasharray="3 3"/>
+                    <circle cx="${x}" cy="${y}" r="40" fill="none" stroke="${resort.color}" stroke-width="2" opacity="0.3"/>
+                    <circle cx="${x}" cy="${y}" r="30" fill="none" stroke="${resort.color}" stroke-width="2.5" opacity="0.4"/>
+                    <circle cx="${x}" cy="${y}" r="20" fill="none" stroke="${resort.color}" stroke-width="3" opacity="0.5"/>
+                    
+                    <!-- Highlight background circle -->
+                    <circle cx="${x}" cy="${y}" r="22" fill="${resort.color}" opacity="0.15"/>
+                    
+                    <!-- Label badge -->
+                    <rect x="${x - 75}" y="${y - 45}" width="150" height="28" rx="14" fill="rgba(0, 0, 0, 0.8)" opacity="0.9" stroke="${resort.color}" stroke-width="1.5"/>
+                    <text x="${x}" y="${y - 28}" text-anchor="middle" fill="${resort.color}" font-size="11" font-weight="900" letter-spacing="0.1em">
+                        ⭐ MEJOR OPCIÓN
+                    </text>
+                `;
+            }
+
+            // Data point with size based on price, score, and stars
+            const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            const radius = calculateCircleRadius(resort);
+            point.setAttribute('cx', x);
+            point.setAttribute('cy', y);
+            point.setAttribute('r', radius);
+            point.setAttribute('fill', resort.color);
+            point.setAttribute('stroke', isSweetSpot ? resort.color : 'rgba(255, 255, 255, 0.4)');
+            point.setAttribute('stroke-width', isSweetSpot ? '3.5' : '2.5');
+            point.setAttribute('class', `curve-point ${isSweetSpot ? 'is-sweetspot' : ''} ${resort.isUltraLuxury ? 'is-ultra-luxury' : ''}`);
+            point.setAttribute('data-hotel', resort.hotel);
+            point.setAttribute('data-name', resort.name);
+            point.setAttribute('data-price', resort.price);
+            point.setAttribute('data-score', resort.score);
+            point.setAttribute('data-value-index', resort.valueIndex.toFixed(2));
+            point.setAttribute('data-monthly', resort.monthly);
+            point.setAttribute('filter', isSweetSpot ? 'url(#glow)' : '');
+            point.style.cursor = 'pointer';
+            dataPointsGroup.appendChild(point);
+
+            // No labels - clean scatter plot (information shown only on hover via tooltip)
+        });
+    }
+
+    // Draw grid lines for better readability
+    function drawGrid() {
+        const gridLinesGroup = curveSvg.querySelector('#gridLines');
+        if (!gridLinesGroup) return;
+
+        gridLinesGroup.innerHTML = '';
+        gridLinesGroup.setAttribute('opacity', '0.2');
+
+        // Vertical grid lines (based on price ticks)
+        const priceRange = maxPrice - minPrice;
+        let tickValues = [];
+        
+        if (priceRange > 200000) {
+            tickValues = [minPrice, 50000, 100000, 150000, 200000, maxPrice];
+        } else {
+            const step = Math.ceil(priceRange / 5);
+            for (let i = 0; i <= 5; i++) {
+                const value = minPrice + (i * step);
+                tickValues.push(Math.round(value / 1000) * 1000);
+            }
+            tickValues[tickValues.length - 1] = maxPrice;
+        }
+        
+        const uniqueTicks = [...new Set(tickValues)].sort((a, b) => a - b);
+        
+        uniqueTicks.forEach(priceValue => {
+            const x = priceScale(priceValue);
+            if (x < padding.left || x > padding.left + chartWidth) return;
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x);
+            line.setAttribute('y1', padding.top);
+            line.setAttribute('x2', x);
+            line.setAttribute('y2', padding.top + chartHeight);
+            line.setAttribute('stroke', 'rgba(255, 255, 255, 0.15)');
+            line.setAttribute('stroke-width', '1');
+            line.setAttribute('stroke-dasharray', '2 2');
+            gridLinesGroup.appendChild(line);
+        });
+
+        // Horizontal grid lines (based on score ticks)
+        const numYTicks = 5;
+        for (let i = 0; i <= numYTicks; i++) {
+            const scoreValue = minScore + (i / numYTicks) * (maxScore - minScore);
+            const y = scoreScale(scoreValue);
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', padding.left);
+            line.setAttribute('y1', y);
+            line.setAttribute('x2', padding.left + chartWidth);
+            line.setAttribute('y2', y);
+            line.setAttribute('stroke', 'rgba(255, 255, 255, 0.15)');
+            line.setAttribute('stroke-width', '1');
+            line.setAttribute('stroke-dasharray', '2 2');
+            gridLinesGroup.appendChild(line);
+        }
+
+        // Main axes (thicker)
+        const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        yAxis.setAttribute('x1', padding.left);
+        yAxis.setAttribute('y1', padding.top);
+        yAxis.setAttribute('x2', padding.left);
+        yAxis.setAttribute('y2', padding.top + chartHeight);
+        yAxis.setAttribute('stroke', 'rgba(255, 255, 255, 0.3)');
+        yAxis.setAttribute('stroke-width', '1.5');
+        gridLinesGroup.appendChild(yAxis);
+
+        const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        xAxis.setAttribute('x1', padding.left);
+        xAxis.setAttribute('y1', padding.top + chartHeight);
+        xAxis.setAttribute('x2', padding.left + chartWidth);
+        xAxis.setAttribute('y2', padding.top + chartHeight);
+        xAxis.setAttribute('stroke', 'rgba(255, 255, 255, 0.3)');
+        xAxis.setAttribute('stroke-width', '1.5');
+        gridLinesGroup.appendChild(xAxis);
+    }
+
+    // Draw axis labels with ticks and values
+    function drawAxisLabels() {
+        const axisLabelsGroup = curveSvg.querySelector('#axisLabels');
+        if (!axisLabelsGroup) return;
+
+        axisLabelsGroup.innerHTML = '';
+
+        // X-axis: Price ticks and labels with better spacing (avoid crowding on left)
+        // Use smart tick values that are evenly distributed visually
+        const priceRange = maxPrice - minPrice;
+        const tickValues = [];
+        
+        // Generate smart tick values for better visual distribution
+        if (priceRange > 200000) {
+            // For large ranges, use round numbers
+            tickValues.push(minPrice);
+            tickValues.push(50000);
+            tickValues.push(100000);
+            tickValues.push(150000);
+            tickValues.push(200000);
+            tickValues.push(maxPrice);
+        } else {
+            // For smaller ranges, use more ticks but with better spacing
+            const step = Math.ceil(priceRange / 5);
+            for (let i = 0; i <= 5; i++) {
+                const value = minPrice + (i * step);
+                tickValues.push(Math.round(value / 1000) * 1000); // Round to nearest 1000
+            }
+            tickValues[tickValues.length - 1] = maxPrice; // Ensure last value is exact max
+        }
+        
+        // Remove duplicates and sort
+        const uniqueTicks = [...new Set(tickValues)].sort((a, b) => a - b);
+        
+        uniqueTicks.forEach(priceValue => {
+            const x = priceScale(priceValue);
+            const y = padding.top + chartHeight;
+            
+            // Skip if outside chart bounds
+            if (x < padding.left || x > padding.left + chartWidth) return;
+            
+            // Tick line
+            const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            tickLine.setAttribute('x1', x);
+            tickLine.setAttribute('y1', y);
+            tickLine.setAttribute('x2', x);
+            tickLine.setAttribute('y2', y + 5);
+            tickLine.setAttribute('stroke', 'rgba(255, 255, 255, 0.4)');
+            tickLine.setAttribute('stroke-width', '1');
+            axisLabelsGroup.appendChild(tickLine);
+            
+            // Price label
+            const priceLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            priceLabel.setAttribute('x', x);
+            priceLabel.setAttribute('y', y + 20);
+            priceLabel.setAttribute('text-anchor', 'middle');
+            priceLabel.setAttribute('fill', 'rgba(255, 255, 255, 0.7)');
+            priceLabel.setAttribute('font-size', '11');
+            priceLabel.setAttribute('font-weight', '600');
+            
+            // Format price: show in thousands if > 1000
+            let priceText;
+            if (priceValue >= 100000) {
+                priceText = `$${(priceValue / 1000).toFixed(0)}k`;
+            } else if (priceValue >= 10000) {
+                priceText = `$${(priceValue / 1000).toFixed(1)}k`;
+            } else {
+                priceText = `$${priceValue.toLocaleString('es-MX')}`;
+            }
+            priceLabel.textContent = priceText;
+            axisLabelsGroup.appendChild(priceLabel);
+        });
+
+        // Y-axis: Score ticks and labels
+        const numYTicks = 5;
+        for (let i = 0; i <= numYTicks; i++) {
+            const scoreValue = minScore + (i / numYTicks) * (maxScore - minScore);
+            const x = padding.left;
+            const y = scoreScale(scoreValue);
+            
+            // Tick line
+            const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            tickLine.setAttribute('x1', x);
+            tickLine.setAttribute('y1', y);
+            tickLine.setAttribute('x2', x - 5);
+            tickLine.setAttribute('y2', y);
+            tickLine.setAttribute('stroke', 'rgba(255, 255, 255, 0.4)');
+            tickLine.setAttribute('stroke-width', '1');
+            axisLabelsGroup.appendChild(tickLine);
+            
+            // Score label
+            const scoreLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            scoreLabel.setAttribute('x', x - 10);
+            scoreLabel.setAttribute('y', y + 4);
+            scoreLabel.setAttribute('text-anchor', 'end');
+            scoreLabel.setAttribute('fill', 'rgba(255, 255, 255, 0.7)');
+            scoreLabel.setAttribute('font-size', '11');
+            scoreLabel.setAttribute('font-weight', '600');
+            scoreLabel.textContent = Math.round(scoreValue);
+            axisLabelsGroup.appendChild(scoreLabel);
+        }
+
+        // X-axis title
+        const xAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        xAxisTitle.setAttribute('x', padding.left + chartWidth / 2);
+        xAxisTitle.setAttribute('y', padding.top + chartHeight + 45);
+        xAxisTitle.setAttribute('text-anchor', 'middle');
+        xAxisTitle.setAttribute('fill', 'rgba(255, 255, 255, 0.8)');
+        xAxisTitle.setAttribute('font-size', '13');
+        xAxisTitle.setAttribute('font-weight', '700');
+        xAxisTitle.textContent = 'Precio Total (MXN)';
+        axisLabelsGroup.appendChild(xAxisTitle);
+
+        // Y-axis title
+        const yAxisTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        yAxisTitle.setAttribute('x', padding.left - 20);
+        yAxisTitle.setAttribute('y', padding.top + chartHeight / 2);
+        yAxisTitle.setAttribute('text-anchor', 'middle');
+        yAxisTitle.setAttribute('fill', 'rgba(255, 255, 255, 0.8)');
+        yAxisTitle.setAttribute('font-size', '13');
+        yAxisTitle.setAttribute('font-weight', '700');
+        yAxisTitle.setAttribute('transform', `rotate(-90 ${padding.left - 20} ${padding.top + chartHeight / 2})`);
+        yAxisTitle.textContent = 'Score de Experiencia';
+        axisLabelsGroup.appendChild(yAxisTitle);
+    }
+
+    // Initialize chart (Scatter Plot)
+    function initCurveChart() {
+        try {
+            // Validate data
+            if (!resortsData || resortsData.length === 0) {
+                console.error('No resort data available');
+                return;
+            }
+
+            // Verify SVG is ready
+            if (!curveSvg || !curveSvg.querySelector) {
+                console.error('SVG not ready');
+                return;
+            }
+
+            // Draw zones first
+            drawZones();
+            
+            // Draw grid lines for better readability
+            drawGrid();
+            
+            // No curve line - clean scatter plot with only points
+            
+            // Draw data points (main focus of scatter plot)
+            drawDataPoints();
+            
+            // Draw axis labels with ticks and values
+            drawAxisLabels();
+            
+            // Verify elements were created
+            const points = getCurvePoints();
+            if (points.length === 0) {
+                console.warn('No data points were created. Resorts data:', resortsData.length);
+            } else {
+                console.log(`Successfully created ${points.length} data points for scatter plot`);
+            }
+        } catch (error) {
+            console.error('Error in initCurveChart:', error);
+            console.error('Stack:', error.stack);
+        }
+    }
+
+    // Tooltip functionality
+    const tooltip = document.getElementById('curveTooltip');
+    const getCurvePoints = () => curveSvg.querySelectorAll('.curve-point');
+
+    function showTooltip(point, event) {
+        if (!tooltip) return;
+        
+        const name = point.getAttribute('data-name');
+        const price = parseFloat(point.getAttribute('data-price'));
+        const score = parseFloat(point.getAttribute('data-score'));
+        const valueIndex = parseFloat(point.getAttribute('data-value-index'));
+        const monthly = parseFloat(point.getAttribute('data-monthly'));
+        const isSweetSpot = point.classList.contains('is-sweetspot');
+
+        tooltip.querySelector('.tooltip-name').textContent = name;
+        tooltip.querySelector('.tooltip-price').textContent = `$${price.toLocaleString()} ($${monthly.toLocaleString()}/mes)`;
+        tooltip.querySelector('.tooltip-score').textContent = `${score}/100`;
+        tooltip.querySelector('.tooltip-value-index').textContent = valueIndex.toFixed(2);
+        
+        const badge = tooltip.querySelector('.tooltip-badge');
+        if (isSweetSpot) {
+            badge.textContent = '⭐ Best Value Sweet Spot';
+            badge.style.display = 'inline-block';
+        } else if (point.classList.contains('is-ultra-luxury')) {
+            badge.textContent = '⚠️ Diminishing Returns';
+            badge.style.display = 'inline-block';
+            badge.style.color = '#FF6B9D';
+        } else {
+            badge.style.display = 'none';
+        }
+
+        // Position tooltip
+        const rect = curveChart.getBoundingClientRect();
+        const pointRect = point.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        
+        let left = pointRect.left - rect.left + (pointRect.width / 2) - (tooltipRect.width / 2);
+        let top = pointRect.top - rect.top - tooltipRect.height - 15;
+        
+        if (left < 0) left = 10;
+        if (left + tooltipRect.width > rect.width) left = rect.width - tooltipRect.width - 10;
+        if (top < 0) top = pointRect.bottom - rect.top + 15;
+        
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+        tooltip.classList.add('is-visible');
+    }
+
+    function hideTooltip() {
+        if (tooltip) {
+            tooltip.classList.remove('is-visible');
+        }
+    }
+
+    // Event listeners for tooltips (completely static circles, no animations)
+    function attachTooltipEvents() {
+        const points = getCurvePoints();
+        points.forEach(point => {
+            // Kill any existing GSAP animations on this point
+            gsap.killTweensOf(point);
+            
+            // Remove any transform that might be applied
+            gsap.set(point, { clearProps: 'all' });
+            
+            point.addEventListener('mouseenter', (e) => {
+                // Kill any animations before showing tooltip
+                gsap.killTweensOf(point);
+                showTooltip(point, e);
+                // Absolutely no circle animation
+            });
+            
+            point.addEventListener('mouseleave', () => {
+                // Kill any animations before hiding tooltip
+                gsap.killTweensOf(point);
+                hideTooltip();
+                // Absolutely no circle animation
+        });
+    });
+}
+
+    // Initialize chart when DOM is ready
+    function setupCurveChart() {
+        try {
+            // Initialize chart first
+            initCurveChart();
+            
+            // Wait a bit for DOM to update, then attach events
+            setTimeout(() => {
+                attachTooltipEvents();
+                setupAnimations();
+            }, 100);
+        } catch (error) {
+            console.error('Error initializing curve chart:', error);
+        }
+    }
+
+    // Setup animations after chart is rendered
+    function setupAnimations() {
+        // Animate on scroll
+    gsap.from('.performance-curve-title, .performance-curve-subtitle', {
+        y: 30,
+        autoAlpha: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power2.out',
+        scrollTrigger: {
+            trigger: '.performance-curve',
             start: 'top 75%'
         }
     });
 
-    gsap.from('#budget .budget-table tbody tr', {
-        y: 14,
+        // No curve animation - scatter plot without connecting line
+
+        // Animate data points with storytelling sequence
+        const points = getCurvePoints();
+        if (points.length > 0) {
+            // Animate regular points first
+            const regularPoints = points.filter(p => !p.classList.contains('is-sweetspot'));
+            const sweetSpotPoint = points.find(p => p.classList.contains('is-sweetspot'));
+            
+            // Animate regular points (fade in only, no scale to avoid conflicts)
+            gsap.from(regularPoints, {
+                autoAlpha: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out',
+            scrollTrigger: {
+                trigger: '.curve-chart',
+                start: 'top 70%',
+                once: true
+                },
+                onComplete: () => {
+                    // Ensure all points are fully visible and at normal state
+                    regularPoints.forEach(p => {
+                        gsap.set(p, { autoAlpha: 1, clearProps: 'all' });
+                    });
+                }
+            });
+
+            // Animate Sweet Spot (fade in only, no scale)
+            if (sweetSpotPoint) {
+                gsap.from(sweetSpotPoint, {
         autoAlpha: 0,
-        duration: 0.55,
-        ease: 'power2.out',
-        stagger: 0.06,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    delay: 0.5,
         scrollTrigger: {
-            trigger: '#budget .budget-table',
-            start: 'top 78%'
+            trigger: '.curve-chart',
+            start: 'top 70%',
+            once: true
+                    },
+                    onComplete: () => {
+                        // Ensure Sweet Spot is fully visible and at normal state
+                        gsap.set(sweetSpotPoint, { autoAlpha: 1, clearProps: 'all' });
+                    }
+                });
+
+                // Animate Sweet Spot highlight rings (fade in only)
+                const sweetSpotRings = curveSvg.querySelectorAll('#sweetSpotHighlight circle');
+                if (sweetSpotRings.length > 0) {
+                    gsap.from(sweetSpotRings, {
+                        opacity: 0,
+                        duration: 1,
+                        stagger: 0.1,
+        ease: 'power2.out',
+                        delay: 1,
+        scrollTrigger: {
+            trigger: '.curve-chart',
+            start: 'top 70%',
+            once: true
         }
     });
+                }
+            }
+        }
 
+    // No label animations - clean scatter plot (labels removed)
+
+    // Animate insight box
+    gsap.from('.curve-insight', {
+        y: 30,
+        autoAlpha: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+            trigger: '.curve-insight',
+            start: 'top 80%'
+        }
+    });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupCurveChart);
+    } else {
+        // DOM already ready
+        setupCurveChart();
+    }
+
+    // Recalculate on window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            initCurveChart();
+            attachTooltipEvents();
+            ScrollTrigger.refresh();
+        }, 250);
+    });
+    })(curveSvg, curveChart);
+}
+
+// Initialize performance curve
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPerformanceCurve);
+} else {
+    // Small delay to ensure DOM is fully parsed
+    setTimeout(initPerformanceCurve, 50);
 }
 
 // ========== HOTELS CAROUSEL (Pinned + Transitions) ==========
