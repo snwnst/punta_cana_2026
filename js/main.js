@@ -742,14 +742,23 @@ function initPerformanceCurve() {
     (function(curveSvg, curveChart) {
     // Resort data with real prices and scores
     const resortsData = [
+          { 
+            name: 'Dreams Onyx', 
+            price: 102798, 
+            score: 95, 
+            stars: 5,
+            color: '#8A5CFF',
+            hotel: 'onyx',
+            monthly: 3807
+        },
         { 
             name: 'Serenade Punta Cana', 
-            price: 37539, 
-            score: 78, 
+            price: 109954, 
+            score: 92, 
             stars: 5,
             color: '#2BE7FF',
             hotel: 'serenade',
-            monthly: 1390
+            monthly: 4072, 
         },
         { 
             name: 'Iberostar Waves Dominicana', 
@@ -763,20 +772,11 @@ function initPerformanceCurve() {
         { 
             name: 'Barceló Bávaro Palace', 
             price: 46920, 
-            score: 86, 
+            score: 80, 
             stars: 5,
             color: '#FFB020',
             hotel: 'barcelo',
             monthly: 1738
-        },
-        { 
-            name: 'Dreams Onyx', 
-            price: 102798, 
-            score: 92, 
-            stars: 5,
-            color: '#8A5CFF',
-            hotel: 'onyx',
-            monthly: 3807
         },
         { 
             name: 'Lopesan Costa Bávaro', 
@@ -786,7 +786,6 @@ function initPerformanceCurve() {
             color: '#FF2BD6',
             hotel: 'lopesan',
             monthly: 4318,
-            isSweetSpot: true
         },
         { 
             name: 'Nickelodeon Hotels & Resorts Punta Cana', 
@@ -988,12 +987,12 @@ function initPerformanceCurve() {
         return path;
     }
 
-    // Draw zones - minimal for clean scatter plot (optional, very subtle)
+    // Draw zones - only vertical division (Value Zone vs Diminishing Returns)
     function drawZones() {
         const zonesGroup = curveSvg.querySelector('#zones');
         if (!zonesGroup) return;
 
-        // Find Lopesan position to define zones dynamically
+        // Find Lopesan position to define vertical zones dynamically
         const lopesanIndex = sortedResorts.findIndex(r => r.isSweetSpot);
         let sweetSpotX = padding.left + chartWidth * 0.4; // Default
         
@@ -1135,7 +1134,7 @@ function initPerformanceCurve() {
             gridLinesGroup.appendChild(line);
         });
 
-        // Horizontal grid lines (based on score ticks)
+        // Horizontal grid lines (based on score ticks) - improved contrast
         const numYTicks = 5;
         for (let i = 0; i <= numYTicks; i++) {
             const scoreValue = minScore + (i / numYTicks) * (maxScore - minScore);
@@ -1146,20 +1145,20 @@ function initPerformanceCurve() {
             line.setAttribute('y1', y);
             line.setAttribute('x2', padding.left + chartWidth);
             line.setAttribute('y2', y);
-            line.setAttribute('stroke', 'rgba(255, 255, 255, 0.15)');
+            line.setAttribute('stroke', 'rgba(255, 255, 255, 0.18)'); // Increased from 0.15 to 0.18
             line.setAttribute('stroke-width', '1');
-            line.setAttribute('stroke-dasharray', '2 2');
+            line.setAttribute('stroke-dasharray', '2 3'); // Slightly adjusted dash pattern
             gridLinesGroup.appendChild(line);
         }
 
-        // Main axes (thicker)
+        // Main axes (thicker and more visible) - improved hierarchy
         const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         yAxis.setAttribute('x1', padding.left);
         yAxis.setAttribute('y1', padding.top);
         yAxis.setAttribute('x2', padding.left);
         yAxis.setAttribute('y2', padding.top + chartHeight);
-        yAxis.setAttribute('stroke', 'rgba(255, 255, 255, 0.3)');
-        yAxis.setAttribute('stroke-width', '1.5');
+        yAxis.setAttribute('stroke', 'rgba(255, 255, 255, 0.4)'); // Increased from 0.3 to 0.4
+        yAxis.setAttribute('stroke-width', '2'); // Increased from 1.5 to 2
         gridLinesGroup.appendChild(yAxis);
 
         const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -1213,24 +1212,25 @@ function initPerformanceCurve() {
             // Skip if outside chart bounds
             if (x < padding.left || x > padding.left + chartWidth) return;
             
-            // Tick line
+            // Tick line - improved contrast
             const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             tickLine.setAttribute('x1', x);
             tickLine.setAttribute('y1', y);
             tickLine.setAttribute('x2', x);
-            tickLine.setAttribute('y2', y + 5);
-            tickLine.setAttribute('stroke', 'rgba(255, 255, 255, 0.4)');
-            tickLine.setAttribute('stroke-width', '1');
+            tickLine.setAttribute('y2', y + 6); // Increased from 5 to 6
+            tickLine.setAttribute('stroke', 'rgba(255, 255, 255, 0.5)'); // Increased from 0.4 to 0.5
+            tickLine.setAttribute('stroke-width', '1.5'); // Increased from 1 to 1.5
             axisLabelsGroup.appendChild(tickLine);
             
-            // Price label
+            // Price label - improved contrast and readability
             const priceLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             priceLabel.setAttribute('x', x);
-            priceLabel.setAttribute('y', y + 20);
+            priceLabel.setAttribute('y', y + 22); // Increased from 20 to 22
             priceLabel.setAttribute('text-anchor', 'middle');
-            priceLabel.setAttribute('fill', 'rgba(255, 255, 255, 0.7)');
-            priceLabel.setAttribute('font-size', '11');
-            priceLabel.setAttribute('font-weight', '600');
+            priceLabel.setAttribute('fill', 'rgba(255, 255, 255, 0.85)'); // Increased from 0.7 to 0.85
+            priceLabel.setAttribute('font-size', '12'); // Increased from 11 to 12
+            priceLabel.setAttribute('font-weight', '700'); // Increased from 600 to 700
+            priceLabel.setAttribute('font-family', 'Inter, -apple-system, BlinkMacSystemFont, sans-serif');
             
             // Format price: show in thousands if > 1000
             let priceText;

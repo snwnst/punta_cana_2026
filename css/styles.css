@@ -2423,8 +2423,11 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, th, td, li {
     border: 1px solid var(--hairline);
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    /* Ensure enough space for Y-axis labels and glow effects */
+    overflow: visible; /* Changed from default to allow labels outside bounds */
 }
 
+/* SVG wrapper with additional left padding to accommodate Y-axis labels */
 .curve-svg {
     width: 100%;
     height: auto;
@@ -2434,21 +2437,29 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, th, td, li {
     background: transparent;
     border-radius: 16px;
     filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.3));
+    /* Prevent clipping of rotated Y-axis label */
+    overflow: visible;
 }
 
+/* Premium typography for all SVG text elements */
 .curve-svg text {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 600;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
+/* Base line styling - improved contrast */
 .curve-svg line {
-    stroke: rgba(255, 255, 255, 0.15);
+    stroke: rgba(255, 255, 255, 0.18); /* Increased from 0.15 */
+    stroke-linecap: round; /* Premium rounded line caps */
 }
 
+/* Grid lines - subtle but visible for better data reading */
 .curve-svg #gridLines line {
-    stroke: rgba(255, 255, 255, 0.12);
+    stroke: rgba(255, 255, 255, 0.15); /* Increased from 0.12 */
+    stroke-dasharray: 2 3; /* Refined dash pattern */
 }
 
 .curve-svg #smoothedCurve {
@@ -2704,8 +2715,22 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, th, td, li {
         grid-template-columns: 1fr;
     }
 
+    /* Responsive: Simplify Y-axis on small screens */
+    .curve-chart {
+        padding: 15px 10px 10px; /* Reduced padding for mobile */
+    }
+    
+    .curve-svg {
+        min-height: 350px; /* Reduced from 400px */
+    }
+    
     .curve-svg text {
         font-size: 10px;
+    }
+    
+    /* Reduce grid line opacity on mobile for cleaner look */
+    .curve-svg #gridLines line {
+        stroke: rgba(255, 255, 255, 0.1);
     }
 }
 
