@@ -622,7 +622,7 @@ if (decisionCards.length && quickDecisionGuide) {
     // 1. Title with enhanced entrance
     decisionTL.from('.quick-decision-title', {
         y: 35,
-            autoAlpha: 0,
+        autoAlpha: 0,
         scale: 0.92,
         rotationX: -15,
         duration: 1,
@@ -666,7 +666,7 @@ if (decisionCards.length && quickDecisionGuide) {
         if (isFirst) {
             decisionTL.to(card, {
                 boxShadow: '0 0 30px rgba(255, 43, 214, 0.4)',
-            duration: 0.6,
+        duration: 0.6,
                 ease: 'power2.inOut',
                 yoyo: true,
                 repeat: 1
@@ -985,6 +985,101 @@ function initPerformanceCurve() {
         path += ` L ${lastPoint.x.toFixed(2)} ${lastPoint.y.toFixed(2)}`;
         
         return path;
+    }
+
+    // Draw logarithmic curve (trend line)
+    function drawLogarithmicCurve() {
+        const curveGroup = curveSvg.querySelector('#logarithmicCurve');
+        if (!curveGroup || sortedResorts.length < 2) return;
+
+        curveGroup.innerHTML = '';
+
+        // Calculate logarithmic regression: y = a * ln(x) + b
+        // Using least squares method for logarithmic regression
+        const n = sortedResorts.length;
+        let sumLnX = 0;
+        let sumY = 0;
+        let sumLnX2 = 0;
+        let sumYLnX = 0;
+
+        sortedResorts.forEach(resort => {
+            const lnX = Math.log(resort.price);
+            sumLnX += lnX;
+            sumY += resort.score;
+            sumLnX2 += lnX * lnX;
+            sumYLnX += resort.score * lnX;
+        });
+
+        // Calculate coefficients: a and b
+        const denominator = n * sumLnX2 - sumLnX * sumLnX;
+        if (Math.abs(denominator) < 0.0001) return; // Avoid division by zero
+
+        const a = (n * sumYLnX - sumLnX * sumY) / denominator;
+        const b = (sumY - a * sumLnX) / n;
+
+        // Generate curve points
+        const curvePoints = [];
+        const numPoints = 200; // High resolution for smooth curve
+        const startPrice = minPrice;
+        const endPrice = maxPrice;
+        const priceStep = (endPrice - startPrice) / numPoints;
+
+        for (let i = 0; i <= numPoints; i++) {
+            const price = startPrice + (i * priceStep);
+            if (price <= 0) continue; // Skip invalid prices for logarithm
+
+            // Calculate score using logarithmic formula
+            const score = a * Math.log(price) + b;
+
+            // Clamp score to valid range
+            const clampedScore = Math.max(minScore - 5, Math.min(maxScore + 5, score));
+
+            // Convert to SVG coordinates
+            const x = priceScale(price);
+            const y = scoreScale(clampedScore);
+
+            // Only add points within chart bounds
+            if (x >= padding.left && x <= padding.left + chartWidth) {
+                curvePoints.push({ x, y });
+            }
+        }
+
+        // Draw the curve as a smooth path using cubic bezier for smooth logarithmic curve
+        if (curvePoints.length < 2) return;
+
+        let path = `M ${curvePoints[0].x.toFixed(2)} ${curvePoints[0].y.toFixed(2)}`;
+
+        // Use cubic bezier for smoother logarithmic curve
+        for (let i = 1; i < curvePoints.length; i++) {
+            const prev = i > 0 ? curvePoints[i - 1] : curvePoints[i];
+            const curr = curvePoints[i];
+            const next = i < curvePoints.length - 1 ? curvePoints[i + 1] : curr;
+            
+            // Calculate control points for smooth cubic bezier
+            const dx1 = (curr.x - prev.x) * 0.3;
+            const dy1 = (curr.y - prev.y) * 0.3;
+            const dx2 = (next.x - curr.x) * 0.3;
+            const dy2 = (next.y - curr.y) * 0.3;
+            
+            const cp1x = prev.x + dx1;
+            const cp1y = prev.y + dy1;
+            const cp2x = curr.x - dx2;
+            const cp2y = curr.y - dy2;
+            
+            path += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${curr.x.toFixed(2)} ${curr.y.toFixed(2)}`;
+        }
+
+        // Create path element
+        const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathElement.setAttribute('d', path);
+        pathElement.setAttribute('fill', 'none');
+        pathElement.setAttribute('stroke', 'url(#curveGradient)');
+        pathElement.setAttribute('stroke-width', '3');
+        pathElement.setAttribute('stroke-linecap', 'round');
+        pathElement.setAttribute('stroke-linejoin', 'round');
+        pathElement.setAttribute('opacity', '0.7');
+        pathElement.setAttribute('class', 'logarithmic-curve');
+        curveGroup.appendChild(pathElement);
     }
 
     // Draw zones - only vertical division (Value Zone vs Diminishing Returns)
@@ -1319,7 +1414,8 @@ function initPerformanceCurve() {
             // Draw grid lines for better readability
             drawGrid();
             
-            // No curve line - clean scatter plot with only points
+            // Draw logarithmic curve (trend line)
+            drawLogarithmicCurve();
             
             // Draw data points (main focus of scatter plot)
             drawDataPoints();
